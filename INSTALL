@@ -1,0 +1,89 @@
+
+ Installation
+ ------------
+
+ Installing RealTimeBattle should not be too difficult; in case you get
+ problems, please send your bug report to rtb@users.sourceforge.net and
+ tell what went wrong.
+
+
+ To compile and install RealTimeBattle, you only need to execute the
+ following commands:
+
+ % ./configure [options]
+ % make
+ # make install
+
+ If you install to directories other than your own, you have to be root. 
+ Observe that GNU make should be used. If make fails, try gmake instead.
+
+
+
+
+ Options
+ -------
+
+ You can change the settings by supplying options to configure, e.g. if
+ you want a different install directory, compile in debug mode or turn
+ off graphics or native language supprt. A full list of options is
+ listed by
+
+ % ./configure --help
+
+ The following options are especially useful:
+
+  --prefix=DIR              The root directory for all installed files,
+                             default: /usr/local
+  --exec-prefix=DIR         Root for architecture-dependent files,
+                             default: prefix
+  --bindir=DIR              Where the RealTimeBattle binary is placed,
+                             default: eprefix/bin
+  --datadir=DIR             Where data is installed,
+                             default: prefix/share
+  --includedir=DIR          Where Messagetypes.h is installed,
+                             default: prefix/include
+  --infodir=DIR             Where info-files are stored,
+                             default: prefix/info
+  --with-rtb-dir            Directory for main installation,
+                             default: eprefix/games/RealTimeBattle
+  --disable-nls             Do not use Native Language Support.
+  --with-included-gettext   Use the GNU gettext library included here.
+  --with-nls-localedir=PATH Directory where your locales are,
+                             default: datadir/locale
+  --enable-debug            Compile for debugging.
+  --disable-graphics        Compile a version without a gui.
+  --without-gtk             Same as --disable-graphics.
+
+ 
+ Note that the default --prefix setting has from v0.9.11 been changed
+ to /usr/local from /usr that was the default prior to v0.9.11. If you
+ still want to use /usr, configure using the command
+
+ % ./configure --prefix=/usr
+
+
+ If you have an old version of RealTimeBattle, it could be necessary to
+ remove the old version first (especially if you change the --prefix
+ option).
+
+ If you need to supply extra flags to the c or c++ compiler, you can do
+ this by changing CFLAGS and CXXFLAGS respectively. For example, using
+ bash,
+
+ % export CXXFLAGS=-Wall
+
+ will add '-Wall' when compiling a c++ program. 
+
+
+
+
+ Compiling for another directory
+ -------------------------------
+
+ It is possible to compile RTB from another directory than the top
+ source directory. To do this follow these steps:
+
+ % mkdir /path/to/RTB/builddir
+ % cd /path/to/RTB/builddir
+ % /path/to/RTB/sourcedir/configure [options]
+ % make

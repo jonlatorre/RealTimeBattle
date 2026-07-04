@@ -1,0 +1,132 @@
+  BUGS
+
+  This is a list of the currently known bugs in this version of the
+  program. If you have found another bug, please look at the most recent
+  version of this file on the homepage
+  <http://www.lysator.liu.se/realtimebattle/Documentation/BUGS.html> and
+  if you cannot find it there either. Do also look at our bugtracking
+  system at SourceForge
+  <https://www.sourceforge.net/bugs/?group_id=561>.  Please use this way
+  of submitting bugs. If you can't, send a bug report to
+  rtb@users.sourceforge.net.  Please don't forget to describe the system
+  you are using, including the version of RealTimeBattle.
+
+  If you want to submit a patch we would appreciate if you could send us
+  a diff from the latest version or directly from the cvs
+  <http://www.sourceforge.net/cvs/?group_id=561>.
+
+
+
+     Various compilation problems
+        System dependent problems may still be present.  If you
+        encounter such a bug please send a bug report to us.
+
+
+     Compilation problems with gettext
+        If you encounter a lot of parse errors with gettext and String,
+        try to configure using:
+
+        % ./configure --with-included-gettext
+
+
+     or if it is still a lot of compilation problems, try to configure
+     using:
+
+     % ./configure --disable-nls
+
+
+     If it still is problems, please send us a bug report.
+
+
+     RTB v1.0.1 crashes when trying to start a new tournament
+        This is fixed in v1.0.2 and later versions. The bug occurs when
+        running without a gtkrc.
+
+
+     RTB v0.9.10 won't compile with gcc-2.95 and gcc-2.95.1
+        Compilation will fail with this compiler, we have no idea why,
+        but it seems that it might be a bug in gcc. We have made a
+        workaround for this problem in v0.9.11 and later versions.
+
+
+     There is a file missing in the 0.9.9 distribution
+        Yes it is, download the latest version, for a working
+        distribution.
+
+
+     Sorting doesn't work for gtk+ 1.0
+        The sort feature is missing in gtk+ 1.0, so this will probably
+        never work.
+
+
+     I can't resize windows in gtk+ 1.0
+
+        We have still not found a solution to this, but it now works in
+        gtk+ >= 1.1.x.  If you can't resize in gtk+ >= 1.1.x either, you
+        have to upgrade to RTB >= 0.9.7.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

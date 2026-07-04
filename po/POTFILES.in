@@ -1,0 +1,18 @@
+# List of source files containing translatable strings.
+
+src/ArenaBase.cc
+src/ArenaWindow.cc
+src/ArenaRealTime.cc
+src/ArenaReplay.cc
+src/ControlWindow.cc
+src/Dialog.cc
+src/Gui.cc
+src/MessageWindow.cc
+src/Options.cc
+src/OptionsWindow.cc
+src/RealTimeBattle.cc
+src/ScoreWindow.cc
+src/StatisticsWindow.cc
+src/StartTournamentWindow.cc
+src/Various.cc
+Robots/rotate_and_fire/rotate_and_fire.cc

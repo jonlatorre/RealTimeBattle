@@ -1,0 +1,132 @@
+  CVS help
+
+
+  If you want to get the very latest snapshot of RealTimeBattle, you are
+  advised to checkout the CVS tree from SourceForge
+  <https://www.sourceforge.net/cvs/?group_id=561>. On this page there
+  are more information on how to use CVS. It is also possible to browse
+  the source there.
+
+
+     Checking out:
+        To check out simply do as follows:
+
+        Note that the main branch at the cvs is in developing stage and
+        may not compile at all, so don't expect it to work.
+
+        First set the environmental variable CVSROOT to
+
+        :pserver:anonymous@cvs.RealTimeBattle.SourceForge.net:/cvsroot/RealTimeBattle
+
+
+     by using %export CVSROOT= if you are using bash or similar shells.
+     or %setenv CVSROOT= if you are using tcsh or similar shells.
+
+     Then go on and and login to the server and checkout:
+
+     %cvs login
+     %cvs co RealTimeBattle
+
+
+     or if you want to check out the stable branch of the RealTimeBattle
+     tree you have to do this:
+
+     %cvs login
+     %cvs co -r release-1-0-0-patches RealTimeBattle
+
+
+
+
+     Requirements:
+
+        To compile RTB from the cvs you will need automake, autoconf and
+        sgml-tools (version 1.0.x) . The latter isn't necessary if you
+        don't need to compile the documentation.
+
+
+     Compiling:
+
+        Before the actual compiliation can be started you need to create
+        the configure script:
+
+        % autogen.sh
+
+
+
+     If everything goes well, you should be able to compile as usual
+     now.
+
+     Note that automake needs the file gtk.m4
+     <http://www.lysator.liu.se/realtimebattle/Download/gtk.m4> , which
+     isn't installed by default on some systems (e.g. FreeBSD).
+
+
+     Internationalization
+
+        To be able to create the *.gmo files you need to have gettext,
+        preferably gettext 0.10.35 or later (see www.gnu.org
+        <www.gnu.org> to download).
+
+
+        If you don't want any other language than english, you don't
+        need to install gettext, but you have to configure using
+
+        % configure --disable-nls
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

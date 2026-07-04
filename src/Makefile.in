@@ -1,0 +1,485 @@
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
+
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+#SUBDIRS = Network
+
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+DESTDIR =
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+CATALOGS = @CATALOGS@
+CATOBJEXT = @CATOBJEXT@
+CC = @CC@
+CXX = @CXX@
+DATADIRNAME = @DATADIRNAME@
+DOCS_DIR = @DOCS_DIR@
+GENCAT = @GENCAT@
+GMOFILES = @GMOFILES@
+GMSGFMT = @GMSGFMT@
+GTK_CFLAGS = @GTK_CFLAGS@
+GTK_CONFIG = @GTK_CONFIG@
+GTK_LIBS = @GTK_LIBS@
+GT_NO = @GT_NO@
+GT_YES = @GT_YES@
+INCLUDE_LOCALE_H = @INCLUDE_LOCALE_H@
+INSTALL_INFO = @INSTALL_INFO@
+INSTOBJEXT = @INSTOBJEXT@
+INTLDEPS = @INTLDEPS@
+INTLLIBS = @INTLLIBS@
+INTLOBJS = @INTLOBJS@
+MAINT = @MAINT@
+MAKEINFO = @MAKEINFO@
+MKINSTALLDIRS = @MKINSTALLDIRS@
+MSGFMT = @MSGFMT@
+PACKAGE = @PACKAGE@
+POFILES = @POFILES@
+POSUB = @POSUB@
+RANLIB = @RANLIB@
+RTB_DIR = @RTB_DIR@
+RTB_LOCALEDIR = @RTB_LOCALEDIR@
+RTB_MAJOR_VERSION = @RTB_MAJOR_VERSION@
+RTB_MICRO_VERSION = @RTB_MICRO_VERSION@
+RTB_MINOR_VERSION = @RTB_MINOR_VERSION@
+RTB_RPM_RELEASE = @RTB_RPM_RELEASE@
+RTB_RPM_VERSION = @RTB_RPM_VERSION@
+RTB_VERSION = @RTB_VERSION@
+USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
+USE_NLS = @USE_NLS@
+VERSION = @VERSION@
+install_info = @install_info@
+l = @l@
+sgml2html = @sgml2html@
+sgml2info = @sgml2info@
+sgml2latex = @sgml2latex@
+sgml2lyx = @sgml2lyx@
+sgml2rtf = @sgml2rtf@
+sgml2txt = @sgml2txt@
+
+bin_PROGRAMS = RealTimeBattle
+include_HEADERS = Messagetypes.h
+
+rtbheaderdir = $(RTB_DIR)
+rtbheader_DATA = Messagetypes.h
+
+@ENABLE_PROF_TRUE@PROFFLAGS = -pg
+@NO_GRAPHICS_TRUE@GRAPHICS_O = 
+@NO_GRAPHICS_FALSE@GRAPHICS_O = 	Gui.o ArenaWindow.o 	ControlWindow.o Dialog.o 	MessageWindow.o 	OptionsWindow.o 	ScoreWindow.o StatisticsWindow.o 	StartTournamentWindow.o Structs.o
+@NO_GRAPHICS_TRUE@GRAPHFLAGS =  -DNO_GRAPHICS 
+
+INCLUDES = $(GTK_CFLAGS) -I$(top_srcdir)/intl $(PROFFLAGS) $(GRAPHFLAGS)
+@NO_GETOPT_LONG_TRUE@GETOPT_O = getopt.o
+@NO_GETOPT_LONG_FALSE@GETOPT_O = 
+@ENABLE_CCMALLOC_TRUE@CCMALLOC_O = /usr/lib/ccmalloc.o -ldl
+@ENABLE_CCMALLOC_FALSE@CCMALLOC_O = 
+
+RealTimeBattle_LDADD = $(GETOPT_O) $(GRAPHICS_O) $(INTLLIBS) $(CCMALLOC_O) $(GTK_LIBS) 
+RealTimeBattle_DEPENDENCIES = $(GETOPT_O) $(GRAPHICS_O) $(INTLOBJS)
+RealTimeBattle_SOURCES =  	ArenaBase.cc ArenaBase.h 	ArenaController.cc ArenaController.h 	ArenaRealTime.cc ArenaRealTime.h 	ArenaReplay.h ArenaReplay.cc 	Extras.cc Extras.h 	IntlDefs.h 	GeometricalObjects.cc GeometricalObjects.h 	List.cc List.h 	Messagetypes.h 	MovingObject.h 	Options.cc Options.h 	RealTimeBattle.cc 	Shape.cc Shape.h 	String.cc String.h 	Various.cc Various.h 	Vector2D.cc Vector2D.h 	Robot.cc Robot.h 	Shot.cc Shot.h 	Structs.h 	Timer.cc Timer.h 	Wall.h 
+
+
+EXTRA_RealTimeBattle_SOURCES =  	ArenaWindow.cc ArenaWindow.h 	ControlWindow.cc ControlWindow.h 	Dialog.cc Dialog.h getopt.c getopt.h 	Gui.cc Gui.h 	MessageWindow.cc MessageWindow.h 	OptionsWindow.cc OptionsWindow.h 	ScoreWindow.cc ScoreWindow.h 	StartTournamentWindow.cc StartTournamentWindow.h 	StatisticsWindow.cc StatisticsWindow.h 	Structs.cc
+
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../config.h
+CONFIG_CLEAN_FILES = 
+PROGRAMS =  $(bin_PROGRAMS)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+RealTimeBattle_OBJECTS =  ArenaBase.o ArenaController.o ArenaRealTime.o \
+ArenaReplay.o Extras.o GeometricalObjects.o List.o Options.o \
+RealTimeBattle.o Shape.o String.o Various.o Vector2D.o Robot.o Shot.o \
+Timer.o
+RealTimeBattle_LDFLAGS = 
+CXXFLAGS = @CXXFLAGS@
+CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
+CFLAGS = @CFLAGS@
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
+DATA =  $(rtbheader_DATA)
+
+HEADERS =  $(include_HEADERS)
+
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = gtar
+GZIP_ENV = --best
+SOURCES = $(RealTimeBattle_SOURCES) $(EXTRA_RealTimeBattle_SOURCES)
+OBJECTS = $(RealTimeBattle_OBJECTS)
+
+all: all-redirect
+.SUFFIXES:
+.SUFFIXES: .S .c .cc .o .s
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps src/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-binPROGRAMS:
+
+clean-binPROGRAMS:
+	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+
+distclean-binPROGRAMS:
+
+maintainer-clean-binPROGRAMS:
+
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo "  $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	     $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	  else :; fi; \
+	done
+
+uninstall-binPROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	done
+
+.c.o:
+	$(COMPILE) -c $<
+
+.s.o:
+	$(COMPILE) -c $<
+
+.S.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+RealTimeBattle: $(RealTimeBattle_OBJECTS) $(RealTimeBattle_DEPENDENCIES)
+	@rm -f RealTimeBattle
+	$(CXXLINK) $(RealTimeBattle_LDFLAGS) $(RealTimeBattle_OBJECTS) $(RealTimeBattle_LDADD) $(LIBS)
+.cc.o:
+	$(CXXCOMPILE) -c $<
+
+install-rtbheaderDATA: $(rtbheader_DATA)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(rtbheaderdir)
+	@list='$(rtbheader_DATA)'; for p in $$list; do \
+	  if test -f $(srcdir)/$$p; then \
+	    echo " $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(rtbheaderdir)/$$p"; \
+	    $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(rtbheaderdir)/$$p; \
+	  else if test -f $$p; then \
+	    echo " $(INSTALL_DATA) $$p $(DESTDIR)$(rtbheaderdir)/$$p"; \
+	    $(INSTALL_DATA) $$p $(DESTDIR)$(rtbheaderdir)/$$p; \
+	  fi; fi; \
+	done
+
+uninstall-rtbheaderDATA:
+	@$(NORMAL_UNINSTALL)
+	list='$(rtbheader_DATA)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(rtbheaderdir)/$$p; \
+	done
+
+install-includeHEADERS: $(include_HEADERS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(includedir)
+	@list='$(include_HEADERS)'; for p in $$list; do \
+	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
+	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(includedir)/$$p"; \
+	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(includedir)/$$p; \
+	done
+
+uninstall-includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	list='$(include_HEADERS)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(includedir)/$$p; \
+	done
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	here=`pwd` && cd $(srcdir) \
+	  && mkid -f$$here/ID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $$unique $(LISP) -o $$here/TAGS)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = src
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+ArenaBase.o: ArenaBase.cc ../config.h getopt.h ArenaBase.h Gui.h \
+	Vector2D.h Messagetypes.h Structs.h String.h Timer.h List.h \
+	Shape.h ArenaController.h IntlDefs.h Extras.h \
+	GeometricalObjects.h Various.h Shot.h MovingObject.h Options.h \
+	Wall.h Robot.h ControlWindow.h MessageWindow.h
+ArenaController.o: ArenaController.cc ../config.h ArenaController.h \
+	ArenaBase.h Gui.h Vector2D.h Messagetypes.h Structs.h String.h \
+	Timer.h getopt.h List.h Shape.h ArenaRealTime.h ArenaReplay.h
+ArenaRealTime.o: ArenaRealTime.cc ../config.h getopt.h ArenaRealTime.h \
+	ArenaBase.h Gui.h Vector2D.h Messagetypes.h Structs.h String.h \
+	Timer.h List.h Shape.h ArenaController.h ArenaWindow.h \
+	IntlDefs.h Extras.h GeometricalObjects.h Various.h Shot.h \
+	MovingObject.h Options.h Wall.h Robot.h ScoreWindow.h \
+	ControlWindow.h MessageWindow.h
+ArenaReplay.o: ArenaReplay.cc ../config.h ArenaReplay.h ArenaBase.h \
+	Gui.h Vector2D.h Messagetypes.h Structs.h String.h Timer.h \
+	getopt.h List.h Shape.h ArenaController.h IntlDefs.h Various.h \
+	Options.h Extras.h GeometricalObjects.h Shot.h MovingObject.h \
+	MessageWindow.h ArenaWindow.h ScoreWindow.h ControlWindow.h \
+	Robot.h
+ArenaWindow.o: ArenaWindow.cc ArenaWindow.h ../config.h Vector2D.h \
+	ArenaController.h ArenaBase.h Gui.h Messagetypes.h Structs.h \
+	String.h Timer.h getopt.h List.h Shape.h IntlDefs.h \
+	ArenaRealTime.h ControlWindow.h Extras.h GeometricalObjects.h \
+	Robot.h MovingObject.h Shot.h
+ControlWindow.o: ControlWindow.cc ControlWindow.h ../config.h IntlDefs.h \
+	ArenaWindow.h Vector2D.h ArenaController.h ArenaBase.h Gui.h \
+	Messagetypes.h Structs.h String.h Timer.h getopt.h List.h \
+	Shape.h MessageWindow.h ScoreWindow.h StatisticsWindow.h \
+	Dialog.h ArenaRealTime.h ArenaReplay.h Robot.h MovingObject.h \
+	GeometricalObjects.h Options.h Various.h
+Dialog.o: Dialog.cc Dialog.h ../config.h String.h List.h IntlDefs.h
+Extras.o: Extras.cc ../config.h Extras.h GeometricalObjects.h Shape.h \
+	Vector2D.h ArenaController.h ArenaBase.h Gui.h Messagetypes.h \
+	Structs.h String.h Timer.h getopt.h List.h ArenaRealTime.h \
+	ArenaWindow.h Options.h Various.h
+GeometricalObjects.o: GeometricalObjects.cc ../config.h \
+	GeometricalObjects.h Shape.h Vector2D.h ArenaWindow.h \
+	ArenaController.h ArenaBase.h Gui.h Messagetypes.h Structs.h \
+	String.h Timer.h getopt.h List.h Various.h ArenaRealTime.h
+Gui.o: Gui.cc ../config.h Gui.h IntlDefs.h ArenaController.h ArenaBase.h \
+	Vector2D.h Messagetypes.h Structs.h String.h Timer.h getopt.h \
+	List.h Shape.h ArenaWindow.h MessageWindow.h ScoreWindow.h \
+	StatisticsWindow.h StartTournamentWindow.h Dialog.h Options.h \
+	Various.h
+List.o: List.cc ../config.h List.h String.h Vector2D.h Shape.h Robot.h \
+	getopt.h Messagetypes.h Structs.h MovingObject.h \
+	GeometricalObjects.h ArenaReplay.h ArenaBase.h Gui.h Timer.h
+MessageWindow.o: MessageWindow.cc MessageWindow.h ../config.h IntlDefs.h \
+	ScoreWindow.h ControlWindow.h Gui.h ArenaController.h \
+	ArenaBase.h Vector2D.h Messagetypes.h Structs.h String.h \
+	Timer.h getopt.h List.h Shape.h ArenaRealTime.h Robot.h \
+	MovingObject.h GeometricalObjects.h Various.h
+Options.o: Options.cc ../config.h IntlDefs.h Options.h Various.h List.h \
+	String.h ArenaRealTime.h ArenaBase.h Gui.h Vector2D.h \
+	Messagetypes.h Structs.h Timer.h getopt.h Shape.h \
+	ArenaController.h OptionsWindow.h
+OptionsWindow.o: OptionsWindow.cc OptionsWindow.h ../config.h String.h \
+	IntlDefs.h ArenaRealTime.h ArenaBase.h Gui.h Vector2D.h \
+	Messagetypes.h Structs.h Timer.h getopt.h List.h Shape.h \
+	ArenaController.h ArenaWindow.h ControlWindow.h MessageWindow.h \
+	ScoreWindow.h StatisticsWindow.h Options.h Various.h
+RealTimeBattle.o: RealTimeBattle.cc ../config.h getopt.h ControlWindow.h \
+	IntlDefs.h Options.h Various.h List.h String.h ArenaRealTime.h \
+	ArenaBase.h Gui.h Vector2D.h Messagetypes.h Structs.h Timer.h \
+	Shape.h ArenaReplay.h ArenaController.h
+Robot.o: Robot.cc ../config.h getopt.h Robot.h Messagetypes.h Structs.h \
+	String.h MovingObject.h GeometricalObjects.h Shape.h Vector2D.h \
+	List.h ArenaController.h ArenaBase.h Gui.h Timer.h \
+	ArenaRealTime.h ArenaReplay.h Various.h Options.h Wall.h Shot.h \
+	Extras.h ArenaWindow.h ScoreWindow.h
+ScoreWindow.o: ScoreWindow.cc ScoreWindow.h ../config.h IntlDefs.h \
+	ControlWindow.h ArenaController.h ArenaBase.h Gui.h Vector2D.h \
+	Messagetypes.h Structs.h String.h Timer.h getopt.h List.h \
+	Shape.h Robot.h MovingObject.h GeometricalObjects.h Various.h
+Shape.o: Shape.cc ../config.h Shape.h Various.h List.h Options.h \
+	String.h
+Shot.o: Shot.cc ../config.h Robot.h getopt.h Messagetypes.h Structs.h \
+	String.h MovingObject.h GeometricalObjects.h Shape.h Vector2D.h \
+	List.h Shot.h ArenaController.h ArenaBase.h Gui.h Timer.h \
+	ArenaRealTime.h ArenaWindow.h Extras.h Various.h Options.h
+StartTournamentWindow.o: StartTournamentWindow.cc ../config.h \
+	ArenaController.h ArenaBase.h Gui.h Vector2D.h Messagetypes.h \
+	Structs.h String.h Timer.h getopt.h List.h Shape.h IntlDefs.h \
+	ArenaRealTime.h StartTournamentWindow.h Various.h Dialog.h \
+	Options.h
+StatisticsWindow.o: StatisticsWindow.cc StatisticsWindow.h ../config.h \
+	IntlDefs.h Gui.h ArenaController.h ArenaBase.h Vector2D.h \
+	Messagetypes.h Structs.h String.h Timer.h getopt.h List.h \
+	Shape.h Various.h Robot.h MovingObject.h GeometricalObjects.h
+String.o: String.cc ../config.h String.h
+Structs.o: Structs.cc ../config.h Structs.h String.h ArenaController.h \
+	ArenaBase.h Gui.h Vector2D.h Messagetypes.h Timer.h getopt.h \
+	List.h Shape.h ArenaRealTime.h
+Timer.o: Timer.cc ../config.h Timer.h getopt.h
+Various.o: Various.cc ../config.h Various.h List.h IntlDefs.h String.h \
+	Options.h Structs.h ControlWindow.h
+Vector2D.o: Vector2D.cc ../config.h Vector2D.h String.h
+
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am: install-binPROGRAMS
+install-exec: install-exec-am
+
+install-data-am: install-rtbheaderDATA install-includeHEADERS
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am: uninstall-binPROGRAMS uninstall-rtbheaderDATA \
+		uninstall-includeHEADERS
+uninstall: uninstall-am
+all-am: Makefile $(PROGRAMS) $(DATA) $(HEADERS)
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+installdirs:
+	$(mkinstalldirs)  $(DESTDIR)$(bindir) $(DESTDIR)$(rtbheaderdir) \
+		$(DESTDIR)$(includedir)
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+mostlyclean-am:  mostlyclean-binPROGRAMS mostlyclean-compile \
+		mostlyclean-tags mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-binPROGRAMS clean-compile clean-tags clean-generic \
+		mostlyclean-am
+
+clean: clean-am
+
+distclean-am:  distclean-binPROGRAMS distclean-compile distclean-tags \
+		distclean-generic clean-am
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-binPROGRAMS \
+		maintainer-clean-compile maintainer-clean-tags \
+		maintainer-clean-generic distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: mostlyclean-binPROGRAMS distclean-binPROGRAMS clean-binPROGRAMS \
+maintainer-clean-binPROGRAMS uninstall-binPROGRAMS install-binPROGRAMS \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile uninstall-rtbheaderDATA install-rtbheaderDATA \
+uninstall-includeHEADERS install-includeHEADERS tags mostlyclean-tags \
+distclean-tags clean-tags maintainer-clean-tags distdir info-am info \
+dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
+install-exec install-data-am install-data install-am install \
+uninstall-am uninstall all-redirect all-am all installdirs \
+mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

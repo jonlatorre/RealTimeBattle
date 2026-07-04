@@ -1,0 +1,396 @@
+  Change log
+
+  ·  1.0.5
+
+
+     Added possibility to send the robots its position. This is done by
+     a new message: Coordinates, and is enabled by a new option: Send
+     robot coordinates. Look in the documentation for more info.
+
+     New translation: Spanish by Mr_Tr
+
+     The robot rotate_and_fire has been slightly changed to send debug-
+     messages of the position of the mines (this is done as an example
+     of how to use coordinates).
+
+     Bugfix: CPU limits should work better now.
+
+     Launching child processes is no longer strictly forbidden, since
+     this gave rise to problems for some programming languages.
+     Tournament organizers can, of course, still forbid this by a
+     statement in the tournament rules.
+
+     Bugfix: Robots which are executable by owner or group are also
+     listed.
+
+
+  ·  1.0.4
+
+
+     New translation: Galician by Jesús Bravo Álvarez.
+
+     It is now possible to create an arc (part of circle ring) in the
+     arena. With it comes two new arena commands, arc and poly_curve.
+     The latter has been added to make it possible to create a series of
+     arcs and lines. A arena-command angle_unit has been added to make
+     it possible to use degrees instead of radians.
+
+     Two new arenas: Flower.arena and Pool.arena
+
+     Improved drawing of inner_circles.
+
+
+  ·  1.0.3
+
+
+     Fixed the bug occuring sometimes when using a different language
+     than english.
+
+     Fixed bug that caused RTB to crash sometimes when using
+     messagefiles.
+
+     Bugfix: command line option '--debug-mode' should work now.
+
+
+  ·  1.0.2
+
+
+     Fixed a bug that caused RealTimeBattle to crash when not using a
+     gtkrc.
+
+
+  ·  1.0.1
+
+
+     New option: Max robots allowed simultaneously. This option allows
+     the user to change how many robots allowed in a sequence. Depending
+     on how many file-descriptors and maximum number of tasks allowed by
+     the system.
+
+     RealTimebattle has now been translated to Japanese.
+
+     Some bugs have been fixed so Japanese translation works correct.
+
+     Fixed a problem with COLLISION giving wrong angle. Thanks to Nathan
+     D Green.
+
+     Sorting by sequence in the statistics when viewing individual
+     robots now works again.
+
+
+  ·  1.0.0
+
+
+     No bugs found, thus v1.0.0 is pretty equal to v1.0.0pre1.
+
+
+  ·  1.0.0pre1:
+
+
+     German translation added (thanks to Uwe Hermann and Jan Suhr).
+
+     A new RealTimeBattle.spec has replaced the older one (thanks to CW
+     Zuckschwerdt).
+
+     Bug fixes for some problems under FreeBSD.
+
+
+  ·  0.9.11:
+
+     The default prefix for the installation has been changed from /usr
+     to /usr/local.
+
+     Polish translation added (thanks to Zbigniew Chyla).
+
+     Portuguese translation added (thanks to Rui Sousa).
+
+     Added info in the documentation on what the different things on the
+     robot are.
+
+     Fixed so it is possible to configure and compile RTB from another
+     directory than the RTB top sourcedir.
+
+     Fixed bug that caused rtb to segfault when it is impossible to open
+     the logfiled supplied on the command-line to be replayed.
+
+     Added so a message is displayed in the messagewindow when a robot
+     has not given any name, so it easy to know which robot that hasn't
+     given any name.
+
+     Removed a memory-leak when adding messages (Note that there is
+     still a lot of leaking memory but this is gtk+'s fault).
+
+     Corrected code that caused a compile-time failure with gcc-2.95.
+
+     Changed so string.h is included instead of strings.h
+
+
+  ·  0.9.10:
+
+     The missing file IntlDefs.h has been added to the distribution.
+
+
+  ·  0.9.9:
+
+     Added support for internationalization. If you do not want native
+     language support configure with the command:
+
+     % ./configure --disable-nls
+
+
+
+  Messages are now displayed much faster in the message-window.
+
+  More dialogs to inform when something goes wrong (i.e. could not start
+  tournament etc.)
+
+  Various minor improvements to the gui.
+
+  Added option Logging frequency to make log files less large.
+
+  Added two new warning messages: NAME_NOT_GIVEN and COLOUR_NOT_GIVEN.
+
+  Robots does get a random colour instead of black if none is given.
+
+  Fixed bug that caused rotate_and_fire_select.cc failed during compile
+  on some slackware machines.
+
+  Fixed bug that caused the arena window not to be hidden correctly when
+  hiding it at the start of a tournament.
+
+  Fixed bug with show and hide windows that caused program failures.
+
+  Probably some other bugs too that I have forgot.
+
+
+  ·  0.9.8:
+
+     A new Robot Option: USE_NON_BLOCKING. By setting this option to
+     false robots input and output pipes are blocked, so that the robot
+     automatically waits for the next message when reading from the
+     STDIN. If you use this, signals are no longer necessary to inform
+     about new messages.
+
+     Replay game. You can now replay a game form its log. Note that
+     logfiles made with earlier versions are incompatible with the
+     replay function.
+
+     New game option: Fast forward factor, which determines how fast the
+     game will be when the fast forward or the rewind button is pressed.
+
+     The default RealTimeBattle installation-directory is now
+     EPREFIX/games/RealTimeBattle instead of
+     PREFIX/games/RealTimeBattle.
+
+     The robot Rotate and Fire now exists in three different versions,
+     all functionally equivalent, but using different methods for
+     reading messages: blocking, select and signals.
+
+     It is now possible to show hidden windows.
+
+     The window for starting tournaments now remembers the previous
+     tournament which is used as default the next time a tournament is
+     to be played.
+
+     It is now possible to load and save tournaments in the start
+     tournament window.
+
+     New game option: Robot startup time, the time between the launching
+     the robot processes and the beginning of the game.
+
+     New misc option: Directory for temporary files, a directory where
+     various temporary files are stored. Defaulted to /tmp/rtb
+
+     Possibility to use +,-,0 instead of pushing buttons zoom in, zoom
+     out resp no zoom.
+
+     There are various changes in the look and feel, which hopefully
+     improves the usability.
+
+
+  ·  0.9.7:
+
+     Lots of internal changes, the class hierarchy is completely redone.
+     Hopefully this will have changed nothing in the behavior of RTB,
+     expect for: GTK+ is no longer necessary when compiling without
+     graphics.
+
+     Optimizations. At least the non-graphics version should be a lot
+     faster now.
+
+     It is now possible to redirect messages to a file or STDOUT.
+
+     Clicking on a robots name in the statistics window now results in
+     showing statistics for that robot.
+
+     Window resizing is working well for gtk 1.1.x and later.
+
+     For gtk 1.1.x and later you can now grab window positions and sizes
+     via a button in the options window.
+
+     Two new keywords added to the messaging language: DebugLine and
+     DebugCircle. These can be used to draw directly to the arena when
+     running at the highest debug level.
+
+     Everything about loading and saving has been removed. It is now
+     legal to read and write to files without restriction. Note that it
+     can, however, be restricted in competitions if the organizer wants
+     to.
+
+     A thin line, marking the angle the robot is facing, is now drawn.
+
+     Some extra bits of information are now displayed in the window
+     titles.
+
+     The robot 'Rotate and Fire' is more or less remade to be a slightly
+     better robot and a much better example.
+
+     The arena is now drawn using a normal right handed coordinate
+     system instead of the one used by gtk+ by default. The result is
+     that everything is turned upside down. Angles do now increase in
+     the counterclockwise direction as they should.
+
+     New option: 'Update interval' which determines how often the robot
+     positions and radars are updated.
+
+
+  ·  0.9.6:
+
+     The installation procedure is completely changed. Now configure is
+     used to make the program easier to adjust to different systems
+     (thanks to Martin Norbäck)
+
+     Log files of games can now be generated. The only problem is that
+     they tend to be very large ...
+     Added sorting in the statistics. Only available with Gtk 1.1.x or
+     later.
+
+     It is now possible to clear the message list and view messages from
+     one robot only.
+
+     It is now possible to autostart a tournament. See docs to know how
+     to do a tournament file.
+
+     It is now possible to choose a statistics file for saving the
+     statistics when autostarting a tournament.
+
+     You can now run RTB without any GUI, either by giving a command
+     line option or by a compilation flag (gtk+ is still required
+     though).
+
+     Added window positions to options.
+
+     Bugfixes:
+
+     An updating problem with gtk 1.1.x in statistics window was solved.
+
+     Messagetypes.h is now LGPL'd instead of GPL'd.
+
+     Error handling is improved (by removing exception handling).
+
+
+  ·  0.9.5:
+
+     The resource-file is now implemented. Please write a .rtbrc for
+     your favorite settings. The easiest way of setting this is to click
+     the Save as Default button in the options window.
+
+     Changing of window sizes has been implemented. Change your .rtbrc
+     for new default sizes.
+
+     The environmental variables RTB_ROBOTDIR and RTB_ARENADIR are
+     replaced with regular options. Place your default directories in
+     your .rtbrc for permanent options.
+
+     Added some buttons to the options window.
+
+     Load and Save buttons now uses the gtk file-selector.
+
+     The savefile-options is removed
+
+     Keyword Break is changed to the correct spelling Brake.
+
+     New robot option: SIGNAL, which will replace the old SEND_SIGNAL.
+     You can now specify which signal to be sent.
+
+     A new warning message: OBSOLETE_KEYWORD. Please replace all the
+     obsolete keywords with the corresponding new version as soon as
+     possible, since obsolete keyword will be completely removed within
+     a number of releases and certainly before 1.0.
+
+     Long command line options are now available.
+
+     The Message output is changed into a clist and new messages are put
+     at the top of the list. Hopefully this is more readable.
+
+     Bugfixes:
+
+     Fixes for floating point problems in BSD (thanks to Dennis
+     Cartier).
+
+     Recent Linux kernels seems to block SIGUSR1, this was fixed by a
+     patch from Oliver Jowett. This bug applies to a lot of robots
+     around, so be sure to add the corresponding code to your robot!
+
+     No scrollbars were appearing in the clists when using Gtk+ 1.1.x.
+     This is now fixed.
+
+     And a lot of smaller bugs, which I am too lazy to write down
+     (thanks to various people).
+
+
+  ·  0.9.4:
+
+     More bugfixes:
+
+     It should be working alright with Gtk+ 1.1.x now and problems with
+     the environmental-variables are fixed.
+
+     And this time also some improvements:
+
+     Enhanced debug-mode, you can now change debug-levels, kill
+     specified robots or the current game. Thanks to Ward & Pieter for
+     the ideas.
+
+     When a rotation has finished, the robot will now get a message if
+     it wishes. Thanks to Artur Adib for the suggestion.
+
+     The included robots are no longer GPL'd, they have no license at
+     all now! Feel free to (ab)use as you wish, but don't blame us if
+     there is a problem :-)
+
+
+  ·  0.9.3:
+
+     Fixed more bugs. Thanks to Ronan Heffernan, Oliver Kurth, Adam C
+     Luter and Björn again.
+
+
+  ·  0.9.2:
+
+     Fixed some bugs. Thanks to Björn Augustsson for a detatiled bug-
+     report.
+
+
+  ·  0.9.1:
+
+     This is the first ever public release of RealTimeBattle. Even
+     though its the first, it should be pretty stable and regarded as an
+     alpha release of the forthcoming version 1.0.  Please report any
+     bugs you encounter. Especially if you have problem with the
+     messaging language, it has to be changed before version 1.0 is
+     released, since thereafter the messaging language is fixed and may
+     not be altered (until version 2.0).
+
+
+
+
+
+
+
+
+
+
+
+
+

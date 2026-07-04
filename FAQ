@@ -1,0 +1,66 @@
+  FAQ
+
+     The program doesn't compile on my computer
+        Please read the INSTALL file carefully, and look at the bug list
+        <http://sourceforge.net/bugs/?group_id=561>.  Make sure you have
+        got the latest version. If it still doesn't work, send a bug
+        report to rtb@users.sourceforge.net or SourceForge
+        <https://www.sourceforge.net/bugs/?group_id=561> and we will try
+        to fix it as soon as possible.
+
+
+     I have installed gtk, but configure doesn't find it
+        Check that gtk-config is in the path! You may need to set the
+        environmental variable GTK_CONFIG if, for example, the name of
+        gtk-config is changed.
+
+
+     My robot doesn't work as I expect
+        If your messages are not recognized at all, the problem may be
+        that the STDOUT needs to be flushed. In C++ this is done
+        automatically by sending endl to cout, but in other languages
+        you have to do it explicitly.
+
+        Another common mistake is to forget whitespace between the
+        arguments of a message. This problem can be hard to find since
+        the warning message is usually sent too late or not at all.
+
+
+     How do I change the language in RealTimeBattle?
+        This is very simple. Just set the environmental variable LANG to
+        your language. In bash for example, use this:
+
+        % export LANG=en_US
+
+
+     Note that en_US is to be replaced with the language code that you
+     want to use.
+
+
+     Which languages are available for RealTimeBattle?
+        There are, at this moment, seven translations apart from
+        english: Polish, Portuguese, German, Swedish, Japanese, Galecian
+        and Spanish.
+
+
+     I want to help with development, what should I do?
+        Work is currently in progress for the upcoming v2.0 of RTB,
+        which is a complete rewrite and does involve lots of new
+        concepts, see the documentation page
+        <https://www.sourceforge.net/docman/?group_id=561> for more
+        info. If you are interested in joining the team, send an email
+        to rtb@users.sourceforge.net.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

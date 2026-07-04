@@ -1,0 +1,412 @@
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
+
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+DESTDIR =
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+CATALOGS = @CATALOGS@
+CATOBJEXT = @CATOBJEXT@
+CC = @CC@
+CXX = @CXX@
+DATADIRNAME = @DATADIRNAME@
+DOCS_DIR = @DOCS_DIR@
+GENCAT = @GENCAT@
+GMOFILES = @GMOFILES@
+GMSGFMT = @GMSGFMT@
+GTK_CFLAGS = @GTK_CFLAGS@
+GTK_CONFIG = @GTK_CONFIG@
+GTK_LIBS = @GTK_LIBS@
+GT_NO = @GT_NO@
+GT_YES = @GT_YES@
+INCLUDE_LOCALE_H = @INCLUDE_LOCALE_H@
+INSTALL_INFO = @INSTALL_INFO@
+INSTOBJEXT = @INSTOBJEXT@
+INTLDEPS = @INTLDEPS@
+INTLLIBS = @INTLLIBS@
+INTLOBJS = @INTLOBJS@
+MAINT = @MAINT@
+MAKEINFO = @MAKEINFO@
+MKINSTALLDIRS = @MKINSTALLDIRS@
+MSGFMT = @MSGFMT@
+PACKAGE = @PACKAGE@
+POFILES = @POFILES@
+POSUB = @POSUB@
+RANLIB = @RANLIB@
+RTB_DIR = @RTB_DIR@
+RTB_LOCALEDIR = @RTB_LOCALEDIR@
+RTB_MAJOR_VERSION = @RTB_MAJOR_VERSION@
+RTB_MICRO_VERSION = @RTB_MICRO_VERSION@
+RTB_MINOR_VERSION = @RTB_MINOR_VERSION@
+RTB_RPM_RELEASE = @RTB_RPM_RELEASE@
+RTB_RPM_VERSION = @RTB_RPM_VERSION@
+RTB_VERSION = @RTB_VERSION@
+USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
+USE_NLS = @USE_NLS@
+VERSION = @VERSION@
+install_info = @install_info@
+l = @l@
+sgml2html = @sgml2html@
+sgml2info = @sgml2info@
+sgml2latex = @sgml2latex@
+sgml2lyx = @sgml2lyx@
+sgml2rtf = @sgml2rtf@
+sgml2txt = @sgml2txt@
+
+docsdir = $(DOCS_DIR)/Documentation
+docs_DATA =     RealTimeBattle-1.html RealTimeBattle-2.html RealTimeBattle-3.html    RealTimeBattle-4.html RealTimeBattle-5.html RealTimeBattle-6.html    RealTimeBattle.html next.gif prev.gif toc.gif RealTimeBattle.dvi
+
+
+rtbinfodir = $(infodir)
+rtbinfo_DATA = RealTimeBattle.info
+
+EXTRA_DIST = $(docs_DATA)  $(rtbinfo_DATA)
+
+NOTE_FILES = ../BUGS ../FAQ ../ChangeLog ../TODO ../CVS-Help
+
+MAINTAINERCLEANFILES = *.{html,dvi,info,txt} $(NOTE_FILES)
+
+PAPER_SIZE = a4
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../config.h
+CONFIG_CLEAN_FILES = 
+DATA =  $(docs_DATA) $(rtbinfo_DATA)
+
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = gtar
+GZIP_ENV = --best
+all: all-redirect
+.SUFFIXES:
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps Documentation/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+install-docsDATA: $(docs_DATA)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(docsdir)
+	@list='$(docs_DATA)'; for p in $$list; do \
+	  if test -f $(srcdir)/$$p; then \
+	    echo " $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(docsdir)/$$p"; \
+	    $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(docsdir)/$$p; \
+	  else if test -f $$p; then \
+	    echo " $(INSTALL_DATA) $$p $(DESTDIR)$(docsdir)/$$p"; \
+	    $(INSTALL_DATA) $$p $(DESTDIR)$(docsdir)/$$p; \
+	  fi; fi; \
+	done
+
+uninstall-docsDATA:
+	@$(NORMAL_UNINSTALL)
+	list='$(docs_DATA)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(docsdir)/$$p; \
+	done
+
+install-rtbinfoDATA: $(rtbinfo_DATA)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(rtbinfodir)
+	@list='$(rtbinfo_DATA)'; for p in $$list; do \
+	  if test -f $(srcdir)/$$p; then \
+	    echo " $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(rtbinfodir)/$$p"; \
+	    $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(rtbinfodir)/$$p; \
+	  else if test -f $$p; then \
+	    echo " $(INSTALL_DATA) $$p $(DESTDIR)$(rtbinfodir)/$$p"; \
+	    $(INSTALL_DATA) $$p $(DESTDIR)$(rtbinfodir)/$$p; \
+	  fi; fi; \
+	done
+
+uninstall-rtbinfoDATA:
+	@$(NORMAL_UNINSTALL)
+	list='$(rtbinfo_DATA)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(rtbinfodir)/$$p; \
+	done
+tags: TAGS
+TAGS:
+
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = Documentation
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am:
+install-exec: install-exec-am
+
+install-data-am: install-docsDATA install-rtbinfoDATA install-data-local
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am: uninstall-docsDATA uninstall-rtbinfoDATA uninstall-local
+uninstall: uninstall-am
+all-am: Makefile $(DATA)
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+installdirs:
+	$(mkinstalldirs)  $(DESTDIR)$(docsdir) $(DESTDIR)$(rtbinfodir)
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
+mostlyclean-am:  mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-generic mostlyclean-am
+
+clean: clean-am
+
+distclean-am:  distclean-generic clean-am
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-generic distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: uninstall-docsDATA install-docsDATA uninstall-rtbinfoDATA \
+install-rtbinfoDATA tags distdir info-am info dvi-am dvi check check-am \
+installcheck-am installcheck install-exec-am install-exec \
+install-data-local install-data-am install-data install-am install \
+uninstall-local uninstall-am uninstall all-redirect all-am all \
+installdirs mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+
+
+install-data-local:
+	gzip -f $(rtbinfodir)/RealTimeBattle.info; \
+   if test "x$(INSTALL_INFO)" != "xno"; then \
+		$(INSTALL_INFO) \
+		--entry "* RealTimeBattle: (RealTimeBattle).             A robot programming game" \
+		--section "Games" \
+		--info-dir $(rtbinfodir) \
+		--info-file $(rtbinfodir)/RealTimeBattle.info.gz; \
+	fi || echo -e "\n\n** Info installation failed, please add the entry to dir by hand **\n\n"
+
+uninstall-local:
+	if test "x$(INSTALL_INFO)" != "xno"; then \
+		$(INSTALL_INFO) --delete \
+		--info-dir $(rtbinfodir) $(rtbinfodir)/RealTimeBattle.info.gz; \
+	fi || echo -e "\n\n** Info uninstallation failed, please remove the entry from dir by hand **\n\n"; \
+	rm -f $(rtbinfodir)/RealTimeBattle.info.gz; \
+	rmdir -p $(DOCS_DIR)/Documentation || true
+
+all: docs
+
+docs: RealTimeBattle-1.html RealTimeBattle-2.html RealTimeBattle-3.html \
+      RealTimeBattle-4.html RealTimeBattle-5.html RealTimeBattle-6.html \
+      RealTimeBattle.html RealTimeBattle.dvi RealTimeBattle.info RealTimeBattle.txt \
+      note-files note-files-html
+
+html_docs: RealTimeBattle-1.html RealTimeBattle-2.html RealTimeBattle-3.html \
+           RealTimeBattle-4.html RealTimeBattle-5.html RealTimeBattle-6.html \
+           RealTimeBattle.html note-files-html
+
+note-files: $(NOTE_FILES)
+
+note-files-html: BUGS.html FAQ.html ChangeLog.html TODO.html CVS-Help.html
+
+realclean: 
+	rm -f $(MAINTAINERCLEANFILES)
+
+# Targets to generate the files if the sgml source exists, otherwise nothing happens 
+
+@SGML2HTML_TRUE@%.html: %.sgml
+@SGML2HTML_TRUE@	@if [ -f $< ]; then \
+@SGML2HTML_TRUE@		echo "sgml2html --split=0 -c latin $<"; \
+@SGML2HTML_TRUE@		sgml2html --split=0 -c latin $<; \
+@SGML2HTML_TRUE@	fi
+@SGML2HTML_FALSE@%.html: %.sgml
+@SGML2HTML_FALSE@	@echo "Warning: $< cannot be generated, sgml2html is missing."; \
+@SGML2HTML_FALSE@	touch $@
+
+#	elif [ ! -f $@ ]; then \
+#		echo "Error: $@ is missing and cannot be generated"; \
+#	fi
+
+@SGML2HTML_TRUE@RealTimeBattle%.html: RealTimeBattle.sgml
+@SGML2HTML_TRUE@	@if [ -f $< ]; then \
+@SGML2HTML_TRUE@		echo "sgml2html --imagebuttons -D table=real -c latin $<"; \
+@SGML2HTML_TRUE@		sgml2html --imagebuttons -D table=real -c latin $<; \
+@SGML2HTML_TRUE@	elif [ ! -f $@ ]; then \
+@SGML2HTML_TRUE@		echo "Error: $@ is missing and cannot be generated"; \
+@SGML2HTML_TRUE@	fi
+@SGML2HTML_FALSE@RealTimeBattle%.html: RealTimeBattle.sgml
+@SGML2HTML_FALSE@	@echo "Warning: $@ cannot be generated, sgml2html is missing."; \
+@SGML2HTML_FALSE@	touch $@
+
+@SGML2LATEX_TRUE@%.dvi: %.sgml
+@SGML2LATEX_TRUE@	@if [ -f $< ]; then \
+@SGML2LATEX_TRUE@		echo "sgml2latex  -p $(PAPER_SIZE) -D table=real -c latin -o dvi $<"; \
+@SGML2LATEX_TRUE@		sgml2latex  -p $(PAPER_SIZE) -D table=real -c latin -o dvi $<; \
+@SGML2LATEX_TRUE@	elif [ ! -f $@ ]; then \
+@SGML2LATEX_TRUE@		echo "Error: $@ is missing and cannot be generated"; \
+@SGML2LATEX_TRUE@	fi
+@SGML2LATEX_FALSE@%dvi: %.sgml
+@SGML2LATEX_FALSE@	@echo "Warning: $@ cannot be generated, sgml2latex is missing."; \
+@SGML2LATEX_FALSE@	touch $@
+
+@SGML2LATEX_TRUE@%.ps: %.sgml
+@SGML2LATEX_TRUE@	@if [ -f $< ]; then \
+@SGML2LATEX_TRUE@		echo "sgml2latex  -p $(PAPER_SIZE) -D table=real -c latin -o ps $<"; \
+@SGML2LATEX_TRUE@		sgml2latex  -p $(PAPER_SIZE)  -D table=real -c latin -o ps $<; \
+@SGML2LATEX_TRUE@	elif [ ! -f $@ ]; then \
+@SGML2LATEX_TRUE@		echo "Error: $@ is missing and cannot be generated"; \
+@SGML2LATEX_TRUE@	fi
+@SGML2LATEX_FALSE@%.ps: %.sgml
+@SGML2LATEX_FALSE@	@echo "Warning: $@ cannot be generated, sgml2latex is missing."; \
+@SGML2LATEX_FALSE@	touch $@
+
+@SGML2INFO_TRUE@%.info: %.sgml
+@SGML2INFO_TRUE@	@if [ -f $< ]; then \
+@SGML2INFO_TRUE@		echo "sgml2info  -D table=char -c latin $<"; \
+@SGML2INFO_TRUE@		sgml2info  -D table=char -c latin $<; \
+@SGML2INFO_TRUE@	elif [ ! -f $@ ]; then \
+@SGML2INFO_TRUE@		echo "Error: $@ is missing and cannot be generated"; \
+@SGML2INFO_TRUE@	fi
+@SGML2INFO_FALSE@%.info: %.sgml
+@SGML2INFO_FALSE@	@echo "Warning: $@ cannot be generated, sgml2info is missing."; \
+@SGML2INFO_FALSE@	touch $@
+
+@SGML2RTF_TRUE@%.rtf: %.sgml
+@SGML2RTF_TRUE@	@if [ -f $< ]; then \
+@SGML2RTF_TRUE@		echo "sgml2rtf -D table=real -c latin $<"; \
+@SGML2RTF_TRUE@		sgml2rtf  -D table=real -c latin $<; \
+@SGML2RTF_TRUE@	elif [ ! -f $@ ]; then \
+@SGML2RTF_TRUE@		echo "Error: $@ is missing and cannot be generated"; \
+@SGML2RTF_TRUE@	fi
+@SGML2RTF_FALSE@%.rtf: %.sgml
+@SGML2RTF_FALSE@	@echo "Warning: $@ cannot be generated, sgml2rtf is missing."; \
+@SGML2RTF_FALSE@	touch $@
+
+@SGML2LYX_TRUE@%.lyx: %.sgml
+@SGML2LYX_TRUE@	@if [ -f $< ]; then \
+@SGML2LYX_TRUE@		echo "sgml2lyx -D table=real -c latin $<"; \
+@SGML2LYX_TRUE@		sgml2lyx  -D table=real -c latin $<; \
+@SGML2LYX_TRUE@	elif [ ! -f $@ ]; then \
+@SGML2LYX_TRUE@		echo "Error: $@ is missing and cannot be generated"; \
+@SGML2LYX_TRUE@	fi
+@SGML2LYX_FALSE@%.lyx: %.sgml
+@SGML2LYX_FALSE@	@echo "Warning: $@ cannot be generated, sgml2lyx is missing."; \
+@SGML2LYX_FALSE@	touch $@
+
+@SGML2TXT_TRUE@%.txt: %.sgml
+@SGML2TXT_TRUE@	@if [ -f $< ]; then \
+@SGML2TXT_TRUE@		echo "sgml2txt --filter -D table=char -c latin $<"; \
+@SGML2TXT_TRUE@		sgml2txt --filter -D table=char -c latin $<; \
+@SGML2TXT_TRUE@	fi
+@SGML2TXT_FALSE@%.txt: %.sgml
+@SGML2TXT_FALSE@	@echo "Warning: $@ cannot be generated, sgml2txt is missing."; \
+@SGML2TXT_FALSE@	touch $@
+
+@SGML2TXT_TRUE@../%: %.sgml
+@SGML2TXT_TRUE@	@if [ -f $< ]; then \
+@SGML2TXT_TRUE@		echo "sgml2txt --filter -D table=char -c latin $<"; \
+@SGML2TXT_TRUE@		sgml2txt --filter -D table=char -c latin $<; \
+@SGML2TXT_TRUE@		echo "mv $(subst ../$(subst ../,,$@),$(subst ../,,$@).txt,$@) $@"; \
+@SGML2TXT_TRUE@		mv $(subst ../$(subst ../,,$@),$(subst ../,,$@).txt,$@) $@; \
+@SGML2TXT_TRUE@	elif [ ! -f $@ ]; then \
+@SGML2TXT_TRUE@		echo "Error: $@ is missing and cannot be generated"; \
+@SGML2TXT_TRUE@	fi
+@SGML2TXT_FALSE@../%: %.sgml
+@SGML2TXT_FALSE@	@echo "Warning: $@ cannot be generated, sgml2txt is missing."; \
+@SGML2TXT_FALSE@	touch $@
+
+#		echo "mv $(subst .sgml,.txt,$<) $@"; \
+#		mv $(subst .sgml,.txt,$<) $@; \
+
+#Just to allow for non-existing .sgml-file
+%.sgml: 
+	@true
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

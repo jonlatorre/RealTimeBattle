@@ -1,0 +1,258 @@
+# Process this file with autoconf to produce a configure script.
+AC_INIT(src/RealTimeBattle.cc)
+
+
+# Use header file 'config.h'
+AM_CONFIG_HEADER(config.h)
+
+
+# Version numbers
+
+RTB_MAJOR_VERSION=1
+RTB_MINOR_VERSION=0
+RTB_MICRO_VERSION=5
+RTB_EXTRA_VERSION=
+RTB_RPM_RELEASE=1
+
+RTB_LAST_RELEASED_VERSION=1.0.5
+RTB_LAST_RELEASED_RELEASE=1
+
+RTB_VERSION=$RTB_MAJOR_VERSION.$RTB_MINOR_VERSION.$RTB_MICRO_VERSION$RTB_EXTRA_VERSION
+
+RTB_RPM_VERSION="$RTB_VERSION"-"$RTB_RPM_RELEASE"
+
+AC_SUBST(RTB_MAJOR_VERSION)
+AC_SUBST(RTB_MINOR_VERSION)
+AC_SUBST(RTB_MICRO_VERSION)
+AC_SUBST(RTB_RPM_RELEASE)
+AC_SUBST(RTB_RPM_VERSION)
+AC_SUBST(RTB_VERSION)
+
+VERSION=$RTB_VERSION
+PACKAGE=RealTimeBattle
+
+AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
+AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
+AC_SUBST(PACKAGE)
+AC_SUBST(VERSION)
+
+# Languages
+
+ALL_LINGUAS="de es gl ja pl pt sv"
+
+# Directories
+
+AC_SUBST(RTB_DIR)
+AC_SUBST(RTB_LOCALEDIR)
+
+# ROBOTDIR=['${RTB_DIR}/Robots']
+# ARENADIR=['${RTB_DIR}/Arenas']
+# AC_SUBST(ROBOTDIR)
+# AC_SUBST(ARENADIR)
+
+DOCS_DIR=['${RTB_DIR}']
+AC_SUBST(DOCS_DIR)
+AC_SUBST(INSTALL_INFO)
+
+
+# Start up automake
+
+AM_INIT_AUTOMAKE($PACKAGE, $VERSION, no-define)
+
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_CC
+AC_ISC_POSIX
+AC_PROG_INSTALL
+
+AC_PREFIX_DEFAULT(/usr/local)
+
+
+# Checks for header files.
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS(fcntl.h strings.h sys/time.h unistd.h floatingpoint.h sys/types.h) 
+AC_EGREP_HEADER(RLIMIT_NPROC, sys/resource.h, AC_DEFINE(HAVE_RLIMIT_NPROC))
+
+# Search for install_info
+
+AC_PATH_PROG(install_info, install-info, no, $PATH:/sbin:/usr/sbin/:/usr/local/sbin)
+INSTALL_INFO=$install_info
+
+# Search fot sgml-tools
+
+AC_CHECK_PROG(sgml2html, sgml2html, yes, no)
+AM_CONDITIONAL(SGML2HTML, test x$sgml2html = xyes)
+
+AC_CHECK_PROG(sgml2latex, sgml2latex, yes, no)
+AM_CONDITIONAL(SGML2LATEX, test x$sgml2latex = xyes)
+
+AC_CHECK_PROG(sgml2info, sgml2info, yes, no)
+AM_CONDITIONAL(SGML2INFO, test x$sgml2info = xyes)
+
+AC_CHECK_PROG(sgml2txt, sgml2txt, yes, no)
+AM_CONDITIONAL(SGML2TXT, test x$sgml2txt = xyes)
+
+AC_CHECK_PROG(sgml2lyx, sgml2lyx, yes, no)
+AM_CONDITIONAL(SGML2LYX, test x$sgml2lyx = xyes)
+
+AC_CHECK_PROG(sgml2rtf, sgml2rtf, yes, no)
+AM_CONDITIONAL(SGML2RTF, test x$sgml2rtf = xyes)
+
+
+
+
+#  debug
+
+AC_ARG_ENABLE(debug, [  
+RealTimeBattle options:
+  --enable-debug          turn on debugging],, enable_debug=no)
+
+AM_MAINTAINER_MODE
+
+AC_ARG_ENABLE(compile-warnings,
+              [  --enable-compile-warnings  turn on compile time warnings],
+              , enable_compile_warnings=no)
+
+WARNING_FLAGS=""
+if test "x$enable_compile_warnings" = "xyes"; then
+	WARNING_FLAGS="-Wall"
+fi
+
+changequote(,)dnl
+if test "x$enable_debug" = "xno"; then
+   CXXFLAGS=`echo "$CXXFLAGS $WARNING_FLAGS " | sed "s/-g //"`
+   CFLAGS=`echo "$CFLAGS $WARNING_FLAGS " | sed "s/-g //"`
+else
+   case " $CXXFLAGS " in
+   *[\ \	]-g[\ \	]*) ;;
+   *) CXXFLAGS="$CXXFLAGS $WARNING_FLAGS -g " ;;
+   esac
+   case " $CFLAGS " in
+   *[\ \	]-g[\ \	]*) ;;
+   *) CFLAGS="$CFLAGS $WARNING_FLAGS -g " ;;
+   esac
+   CXXFLAGS=`echo "$CXXFLAGS " | sed "s/-O[0-9]* //"`
+   CFLAGS=`echo "$CXXFLAGS " | sed "s/-O[0-9]* //"`
+fi
+changequote([,])dnl
+
+
+#  RPM - set the correct CXXFLAGS and CFLAGS. Do not install the docs.
+
+AC_ARG_ENABLE(rpm, [  --enable-rpm=[opts]     used when making RPM-packages], use_rpm=yes, use_rpm=no)
+
+changequote(,)dnl
+if test "x$use_rpm" = "xyes"; then
+   CXXFLAGS="$enable_rpm" 	
+   CFLAGS="$enable_rpm" 	
+#	DOCS_DIR='${prefix}/doc/RealTimeBattle-${VERSION}'
+	INSTALL_INFO=no
+fi
+changequote([,])dnl
+AM_CONDITIONAL(ENABLE_RPM, test x$use_rpm = xyes)
+
+
+#AC_ARG_ENABLE(docs-install,[ --enable-docs-install   install documentation], enable_docs_install=yes)
+
+#AM_CONDITIONAL(INSTALL_DOCS, test x$enable_docs_install = xyes)
+
+
+# rtb-dir
+
+AC_ARG_WITH(rtb_dir, 
+[  --with-rtb-dir=[path]   directory for rtb installation 
+                          [EPREFIX/games/RealTimeBattle]],,
+   with_rtb_dir=['${exec_prefix}/games/RealTimeBattle'])
+
+RTB_DIR=$with_rtb_dir
+
+RTB_EXPAND_DIR(ROBOTDIR, "${RTB_DIR}/Robots")
+RTB_EXPAND_DIR(ARENADIR, "${RTB_DIR}/Arenas")
+AC_DEFINE_UNQUOTED(ROBOTDIR, "$ROBOTDIR")
+AC_DEFINE_UNQUOTED(ARENADIR, "$ARENADIR")
+
+# Internationalization
+AC_ARG_WITH(nls_localedir, 
+[  --with-nls-localedir=[path]
+                          Data directory for NLS, parent of locale 
+                          [DATADIR/locale]],,
+   with_nls_localedir=['${datadir}/locale'])
+
+#RTB_LOCALEDIR=$with_nls_localedir
+RTB_EXPAND_DIR(RTB_LOCALEDIR, "${with_nls_localedir}")
+RTB_EXPAND_DIR(RTB_LOCALEDIR, "${RTB_LOCALEDIR}") #Need to expand twice!
+AC_DEFINE_UNQUOTED(RTB_LOCALEDIR, "$RTB_LOCALEDIR")
+AM_GNU_GETTEXT
+
+# graphics / GTK
+
+AC_ARG_ENABLE(graphics, [  --disable-graphics      make a version without a GUI], enable_graphics=no, enable_graphics=yes)
+
+AC_ARG_WITH(gtk,        [  --without-gtk           do not use GTK+ (same as --disable-graphics)], enable_graphics=no)
+
+
+# Check for GTK+.
+
+if test "x$enable_graphics" = "xyes"; then
+	AC_ARG_ENABLE(dummy, [
+GTK options: ])
+	AM_PATH_GTK(0.99.7, ,
+		AC_MSG_WARN([
+*** GTK+ >= 0.99.7 is not correctly installed.
+*** Changing to non-graphical version of RTB.
+*** The latest version of GTK can be found at http://www.gtk.org])
+		enable_graphics=no
+	)
+fi
+
+AM_CONDITIONAL(NO_GRAPHICS, test x$enable_graphics = xno)
+
+#  ccmalloc
+
+AC_ARG_ENABLE(ccmalloc, [], enable_ccmalloc=yes, enable_ccmalloc=no)
+AM_CONDITIONAL(ENABLE_CCMALLOC, test x$enable_ccmalloc = xyes)
+
+
+# profiling
+
+AC_ARG_ENABLE(prof, [], enable_prof=yes, enable_prof=no)
+AM_CONDITIONAL(ENABLE_PROF, test x$enable_prof = xyes)
+
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_PID_T
+AC_HEADER_TIME
+
+# Checks for library functions.
+AC_TYPE_SIGNAL
+AC_CHECK_FUNCS(select strcat strchr strrchr strncpy)
+AC_CHECK_FUNC(getopt_long,, [getopt=yes])
+AM_CONDITIONAL(NO_GETOPT_LONG, test x$getopt = xyes)
+
+AC_CHECK_LIB(xpg4, setlocale)
+
+# Finished !
+
+AC_OUTPUT([
+        intl/Makefile
+        Arenas/Makefile
+        Documentation/Makefile
+        Robots/Makefile
+        Robots/seek_and_destroy/Makefile
+        Robots/rotate_and_fire/Makefile
+        Robots/empty/Makefile
+        src/Makefile
+        po/Makefile.in
+        Packages/Makefile
+        Packages/rpm/Makefile
+        Packages/rpm/RealTimeBattle.spec
+        Packages/debian/Makefile
+        Packages/freebsd/Makefile
+        Makefile],
+        [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])
+
