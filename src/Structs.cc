@@ -29,48 +29,26 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 pixmap_t::~pixmap_t()
 {
-  if( pixmap != NULL )
-    {
-      //      gdk_pixmap_unref(pixmap);
-      //      gdk_bitmap_unref(bitmap);
-      //TODO: check if window is open before unrefing
-    }
+  if( pixbuf != NULL )
+    g_object_unref( pixbuf );
 }
 
-void
-pixmap_t::set_pixmap(GdkColor& col, GdkWindow* win)
+// Devuelve (creando y cacheando la primera vez) un GdkPixbuf 16x16 relleno
+// con el color solido del robot.
+GdkPixbuf*
+pixmap_t::get_pixbuf(GdkColor& col)
 {
-  if( pixmap != NULL )
+  if( pixbuf == NULL )
     {
-      gdk_pixmap_unref(pixmap);
-      gdk_bitmap_unref(bitmap);
+      pixbuf = gdk_pixbuf_new( GDK_COLORSPACE_RGB, FALSE, 8, 16, 16 );
+      guint32 rgba =
+        ( ( (guint32)( col.red   >> 8 ) ) << 24 ) |
+        ( ( (guint32)( col.green >> 8 ) ) << 16 ) |
+        ( ( (guint32)( col.blue  >> 8 ) ) <<  8 ) |
+        0xff;
+      gdk_pixbuf_fill( pixbuf, rgba );
     }
-  
-  gchar square_bits[] = {
-    0xff, 0x3f, 0xff, 0x3f, 0xff, 0x3f, 0xff, 0x3f, 0xff, 0x3f, 0xff, 0x3f,
-    0xff, 0x3f, 0xff, 0x3f, 0xff, 0x3f, 0xff, 0x3f, 0xff, 0x3f, 0xff, 0x3f,
-    0xff, 0x3f, 0xff, 0x3f, 0xff, 0x3f, 0xff, 0x3f};
-
-  pixmap = gdk_pixmap_create_from_data( win, square_bits, 16, 16, -1, &col, 
-                                        the_gui.get_bg_gdk_colour_p() );
-
-  bitmap = gdk_bitmap_create_from_data( win, square_bits, 16, 16 );
-}
-
-void
-pixmap_t::get_pixmap(GdkColor& col, GdkWindow* win, GdkPixmap*& pixm, GdkBitmap*& bitm )
-{
-  if( win != window && pixmap != NULL )
-    {
-      gdk_pixmap_unref(pixmap);
-      pixmap = NULL;
-      gdk_bitmap_unref(bitmap);
-      bitmap = NULL;
-    }
-  if( pixmap == NULL ) set_pixmap(col, win);
-  
-  pixm = pixmap;
-  bitm = bitmap;
+  return pixbuf;
 }
 
 #endif

@@ -23,7 +23,7 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 class Vector2D;
 
 #ifndef NO_GRAPHICS
-# include <gdk/gdktypes.h>
+# include <gdk/gdk.h>
 #endif
 
 

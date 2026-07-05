@@ -22,6 +22,7 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #endif
 
 #include <gtk/gtk.h>
+#include "CListCompat.h"
 
 #if HAVE_DIRENT_H
 # if HAVE_SYS_TYPES_H
@@ -72,20 +73,20 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
   gtk_window_set_title( GTK_WINDOW( window_p ),
                         _("Start New Tournament") );
 
-  gtk_container_border_width( GTK_CONTAINER( window_p ), 12 );
+  gtk_container_set_border_width( GTK_CONTAINER( window_p ), 12 );
 
   if( default_width != -1 && default_height != -1 )
 #if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
     gtk_window_set_default_size( GTK_WINDOW( window_p ),
                                  default_width, default_height );
 #else
-  gtk_widget_set_usize( window_p, default_width, default_height );
+  gtk_widget_set_size_request( window_p, default_width, default_height );
 #endif
   if( default_x_pos != -1 && default_y_pos != -1 )
-    gtk_widget_set_uposition( window_p, default_x_pos, default_y_pos );
+    gtk_window_move( GTK_WINDOW( window_p ), default_x_pos, default_y_pos );
 
-  gtk_signal_connect( GTK_OBJECT( window_p ), "delete_event",
-                      (GtkSignalFunc) StartTournamentWindow::delete_event_occured,
+  g_signal_connect( G_OBJECT( window_p ), "delete_event",
+                      (GCallback) StartTournamentWindow::delete_event_occured,
                       (gpointer) this );
 
   // Lists for clists
@@ -97,7 +98,7 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
 
   // Main box
 
-  GtkWidget* vbox = gtk_vbox_new( FALSE, 10 );
+  GtkWidget* vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 10 );
   gtk_container_add( GTK_CONTAINER( window_p ), vbox );
   gtk_widget_show( vbox );
 
@@ -139,7 +140,7 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
           gtk_widget_show( hsep );
         }
 
-      GtkWidget* hbox = gtk_hbox_new( FALSE, 10 );
+      GtkWidget* hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 10 );
       gtk_container_add( GTK_CONTAINER( vbox ), hbox );
       gtk_widget_show( hbox );
 
@@ -159,7 +160,7 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
           if( i == START_TORUNAMENT_REMOVE ||
               i == START_TORUNAMENT_ADD )
             {
-              vbox2 = gtk_vbox_new( FALSE, 10 );
+              vbox2 = gtk_box_new( GTK_ORIENTATION_VERTICAL, 10 );
               gtk_box_pack_start( GTK_BOX( hbox ), vbox2, FALSE, FALSE, 0 );
               gtk_widget_show( vbox2 );
             }
@@ -167,8 +168,8 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
           struct select_buttons_t* s_button;
           
           s_button = new select_buttons_t( robot, i, this );
-          gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-                              (GtkSignalFunc) StartTournamentWindow::button_selected,
+          g_signal_connect( G_OBJECT( button ), "clicked",
+                              (GCallback) StartTournamentWindow::button_selected,
                               (gpointer) s_button );
           gtk_box_pack_start( GTK_BOX( vbox2 ), button, TRUE, FALSE, 0 );
           gtk_widget_show( button );
@@ -242,11 +243,11 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
   char * label_titles[] = { _("Games per sequence"), _("Robots per sequence"),
                             _("Number of sequences") };
 
-  GtkWidget * hbox2 = gtk_hbox_new (FALSE, 10);
+  GtkWidget * hbox2 = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 10);
   gtk_box_pack_start (GTK_BOX (vbox), hbox2, FALSE, FALSE, 0);
   gtk_widget_show (hbox2);
 
-  GtkWidget * internal_hbox = gtk_hbox_new( FALSE, 10 );
+  GtkWidget * internal_hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 10 );
   gtk_box_pack_start (GTK_BOX (hbox2), internal_hbox, TRUE, FALSE, 0);
   gtk_widget_show (internal_hbox);
 
@@ -262,7 +263,7 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
 
   for( int i=0;i<3;i++ )
     {
-      GtkWidget * internal_hbox = gtk_hbox_new( FALSE, 10 );
+      GtkWidget * internal_hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 10 );
       gtk_table_attach_defaults( GTK_TABLE( description_table ),
                                  internal_hbox, 0, 1, i, i + 1 );
       gtk_widget_show (internal_hbox);
@@ -271,7 +272,8 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
       gtk_box_pack_start (GTK_BOX (internal_hbox), label, FALSE, FALSE, 0);
       gtk_widget_show(label);
 
-      entries[i] = gtk_entry_new_with_max_length(4);
+      entries[i] = gtk_entry_new();
+      gtk_entry_set_max_length( GTK_ENTRY( entries[i] ), 4 );
 
       switch(i)
         {
@@ -286,11 +288,11 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
 
       entry_t * info = new entry_t( ENTRY_INT, false );
 
-      gtk_signal_connect(GTK_OBJECT(entries[i]), "changed",
-                         (GtkSignalFunc) entry_handler, info);
+      g_signal_connect(G_OBJECT(entries[i]), "changed",
+                         (GCallback) entry_handler, info);
       gtk_table_attach_defaults( GTK_TABLE( entry_table ),
                                  entries[i], 0, 1, i, i + 1 );
-      gtk_widget_set_usize(entries[i], 36,18);
+      gtk_widget_set_size_request(entries[i], 36,18);
       gtk_widget_show(entries[i]);
 
       GtkWidget * button;
@@ -301,8 +303,8 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
 
       min_max_full_buttons_t* mmf_button;
       mmf_button = new min_max_full_buttons_t( i, MMF_MIN, this );
-      gtk_signal_connect (GTK_OBJECT (button), "clicked",
-                          (GtkSignalFunc) StartTournamentWindow::set_entry,
+      g_signal_connect (G_OBJECT (button), "clicked",
+                          (GCallback) StartTournamentWindow::set_entry,
                           (gpointer) mmf_button );
       gtk_table_attach_defaults( GTK_TABLE( button_table ), button, 0, 3 + add, i, i + 1 );
       gtk_widget_show (button);
@@ -312,8 +314,8 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
           button = gtk_button_new_with_label (_(" All Arenas "));
           mmf_button = new min_max_full_buttons_t( i, MMF_ALL_ARENAS,
                                                    this );
-          gtk_signal_connect (GTK_OBJECT (button), "clicked",
-                              (GtkSignalFunc) StartTournamentWindow::set_entry,
+          g_signal_connect (G_OBJECT (button), "clicked",
+                              (GCallback) StartTournamentWindow::set_entry,
                               (gpointer) mmf_button );
           gtk_table_attach_defaults( GTK_TABLE( button_table ), button, 3, 9, i, i + 1 );
           gtk_widget_show (button);
@@ -324,8 +326,8 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
           button = gtk_button_new_with_label (_(" Full Round "));
           mmf_button = new min_max_full_buttons_t( i, MMF_FULL_ROUND,
                                                    this );
-          gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-                              (GtkSignalFunc) StartTournamentWindow::set_entry,
+          g_signal_connect( G_OBJECT( button ), "clicked",
+                              (GCallback) StartTournamentWindow::set_entry,
                               (gpointer) mmf_button );
           gtk_table_attach_defaults( GTK_TABLE( button_table ), button, 3, 9, i, i + 1 );
           gtk_widget_show( button );
@@ -333,8 +335,8 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
 
       button = gtk_button_new_with_label (_(" Max "));
       mmf_button = new min_max_full_buttons_t( i, MMF_MAX, this );
-      gtk_signal_connect (GTK_OBJECT (button), "clicked",
-                          (GtkSignalFunc) StartTournamentWindow::set_entry,
+      g_signal_connect (G_OBJECT (button), "clicked",
+                          (GCallback) StartTournamentWindow::set_entry,
                           (gpointer) mmf_button );
       gtk_table_attach_defaults( GTK_TABLE( button_table ), button, 9 - add, 12, i, i + 1 );
       gtk_widget_show (button);
@@ -354,7 +356,7 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
   gtk_box_pack_start( GTK_BOX( hbox2 ), vsep, FALSE, FALSE, 0 );
   gtk_widget_show( vsep );
 
-  GtkWidget* vbox2 = gtk_vbox_new( FALSE, 10 );
+  GtkWidget* vbox2 = gtk_box_new( GTK_ORIENTATION_VERTICAL, 10 );
   gtk_box_pack_start( GTK_BOX(hbox2), vbox2, TRUE, FALSE, 0);
   gtk_widget_show (vbox2);
 
@@ -364,19 +366,19 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
       {
         GtkWidget* button = gtk_button_new_with_label( button_labels[i] );
         if(i==0)
-          gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-                              (GtkSignalFunc) StartTournamentWindow::load_tournament_selected,
+          g_signal_connect( G_OBJECT( button ), "clicked",
+                              (GCallback) StartTournamentWindow::load_tournament_selected,
                               (gpointer) this );          
         if(i==1)
-          gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-                              (GtkSignalFunc) StartTournamentWindow::save_tournament_selected,
+          g_signal_connect( G_OBJECT( button ), "clicked",
+                              (GCallback) StartTournamentWindow::save_tournament_selected,
                               (gpointer) this );
         gtk_box_pack_start( GTK_BOX(vbox2), button, TRUE, FALSE, 0);
         gtk_widget_show( button );
       }
   }  
 
-  vbox2 = gtk_vbox_new( FALSE, 10 );
+  vbox2 = gtk_box_new( GTK_ORIENTATION_VERTICAL, 10 );
   gtk_box_pack_end( GTK_BOX(hbox2), vbox2, TRUE, FALSE, 0);
   gtk_widget_show (vbox2);
 
@@ -386,12 +388,12 @@ StartTournamentWindow::StartTournamentWindow( const int default_width,
       {
         GtkWidget* button = gtk_button_new_with_label( button_labels[i] );
         if(i==0)
-          gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-                              (GtkSignalFunc) StartTournamentWindow::start,
+          g_signal_connect( G_OBJECT( button ), "clicked",
+                              (GCallback) StartTournamentWindow::start,
                               (gpointer) this );          
         if(i==1)
-          gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-                              (GtkSignalFunc) StartTournamentWindow::cancel_new_tournament,
+          g_signal_connect( G_OBJECT( button ), "clicked",
+                              (GCallback) StartTournamentWindow::cancel_new_tournament,
                               (gpointer) this );
         gtk_box_pack_start( GTK_BOX(vbox2), button, TRUE, FALSE, 0);
         gtk_widget_show( button );
@@ -433,15 +435,16 @@ StartTournamentWindow::add_clist( GtkWidget* clist, GtkWidget* box )
   gtk_clist_set_column_justification( GTK_CLIST( clist ),
                                       0, GTK_JUSTIFY_LEFT);
   gtk_clist_column_titles_passive( GTK_CLIST( clist ) );
-  gtk_signal_connect( GTK_OBJECT( clist ), "select_row",
-                      (GtkSignalFunc) StartTournamentWindow::selection_made, this );
-  gtk_signal_connect( GTK_OBJECT( clist ), "unselect_row",
-                      (GtkSignalFunc) StartTournamentWindow::selection_made, this );
+  gtk_clist_set_select_callback
+    ( clist,
+      (GtkClistSelectFunc) StartTournamentWindow::selection_made,
+      (GtkClistSelectFunc) StartTournamentWindow::selection_made,
+      this );
 
 #if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
   gtk_clist_set_shadow_type( GTK_CLIST( clist ),
                              GTK_SHADOW_IN );
-  gtk_widget_set_usize( clist, all_clists_width,
+  gtk_widget_set_size_request( clist, all_clists_width,
                         all_clists_height );
   gtk_container_add( GTK_CONTAINER( scrolled_win ),
                      clist );
@@ -461,7 +464,7 @@ StartTournamentWindow::add_clist( GtkWidget* clist, GtkWidget* box )
                         GTK_SHADOW_IN );
   gtk_clist_set_policy( GTK_CLIST( clist ),
                         GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC );
-  gtk_widget_set_usize( clist,
+  gtk_widget_set_size_request( clist,
                         all_clists_width + 20, all_clists_height + 20 );
   gtk_box_pack_start( GTK_BOX( box ), clist,
                       TRUE, TRUE, 0 );
@@ -491,17 +494,24 @@ StartTournamentWindow::load_tournament_selected( GtkWidget* widget,
   if( stw_p->get_filesel() != NULL )
     return;
 
-  GtkWidget* fs = gtk_file_selection_new( _("Choose a tournament file to load") );
-  gtk_signal_connect( GTK_OBJECT( fs ), "destroy",
-                      (GtkSignalFunc) StartTournamentWindow::destroy_filesel,
+  GtkWidget* fs = gtk_file_chooser_dialog_new
+    ( _("Choose a tournament file to load"),
+      GTK_WINDOW( stw_p->get_window_p() ),
+      GTK_FILE_CHOOSER_ACTION_OPEN, NULL );
+  GtkWidget* cancel_button =
+    gtk_dialog_add_button( GTK_DIALOG( fs ), _("Cancel"), GTK_RESPONSE_CANCEL );
+  GtkWidget* ok_button =
+    gtk_dialog_add_button( GTK_DIALOG( fs ), _("OK"), GTK_RESPONSE_OK );
+  g_signal_connect( G_OBJECT( fs ), "destroy",
+                      (GCallback) StartTournamentWindow::destroy_filesel,
                       (gpointer) stw_p );
-  gtk_signal_connect
-    ( GTK_OBJECT( GTK_FILE_SELECTION( fs )->cancel_button ), "clicked",
-      (GtkSignalFunc) StartTournamentWindow::destroy_filesel,
+  g_signal_connect
+    ( G_OBJECT( cancel_button ), "clicked",
+      (GCallback) StartTournamentWindow::destroy_filesel,
       (gpointer) stw_p );
-  gtk_signal_connect
-    ( GTK_OBJECT( GTK_FILE_SELECTION( fs )->ok_button ), "clicked",
-      (GtkSignalFunc) StartTournamentWindow::load_file_selected,
+  g_signal_connect
+    ( G_OBJECT( ok_button ), "clicked",
+      (GCallback) StartTournamentWindow::load_file_selected,
       (gpointer) stw_p );
   gtk_widget_show( fs );
   stw_p->set_filesel( fs );
@@ -511,10 +521,11 @@ void
 StartTournamentWindow::load_file_selected( GtkWidget* widget,
                                            class StartTournamentWindow* stw_p )
 {
-  stw_p->load_tournament_file
-    ( String( gtk_file_selection_get_filename
-              ( GTK_FILE_SELECTION( stw_p->get_filesel() ) ) ),
-      true );
+  gchar* fname = gtk_file_chooser_get_filename
+    ( GTK_FILE_CHOOSER( stw_p->get_filesel() ) );
+  stw_p->load_tournament_file( String( fname != NULL ? fname : "" ), true );
+  if( fname != NULL )
+    g_free( fname );
   destroy_filesel( stw_p->get_filesel(), stw_p );
 }
 
@@ -525,17 +536,24 @@ StartTournamentWindow::save_tournament_selected( GtkWidget* widget,
   if( stw_p->get_filesel() != NULL )
     return;
 
-  GtkWidget* fs = gtk_file_selection_new( _("Choose file to save tournament into") );
-  gtk_signal_connect( GTK_OBJECT( fs ), "destroy",
-                      (GtkSignalFunc) StartTournamentWindow::destroy_filesel,
+  GtkWidget* fs = gtk_file_chooser_dialog_new
+    ( _("Choose file to save tournament into"),
+      GTK_WINDOW( stw_p->get_window_p() ),
+      GTK_FILE_CHOOSER_ACTION_SAVE, NULL );
+  GtkWidget* cancel_button =
+    gtk_dialog_add_button( GTK_DIALOG( fs ), _("Cancel"), GTK_RESPONSE_CANCEL );
+  GtkWidget* ok_button =
+    gtk_dialog_add_button( GTK_DIALOG( fs ), _("OK"), GTK_RESPONSE_OK );
+  g_signal_connect( G_OBJECT( fs ), "destroy",
+                      (GCallback) StartTournamentWindow::destroy_filesel,
                       (gpointer) stw_p );
-  gtk_signal_connect
-    ( GTK_OBJECT( GTK_FILE_SELECTION( fs )->cancel_button ), "clicked",
-      (GtkSignalFunc) StartTournamentWindow::destroy_filesel,
+  g_signal_connect
+    ( G_OBJECT( cancel_button ), "clicked",
+      (GCallback) StartTournamentWindow::destroy_filesel,
       (gpointer) stw_p );
-  gtk_signal_connect
-    ( GTK_OBJECT( GTK_FILE_SELECTION( fs )->ok_button ), "clicked",
-      (GtkSignalFunc) StartTournamentWindow::save_file_selected,
+  g_signal_connect
+    ( G_OBJECT( ok_button ), "clicked",
+      (GCallback) StartTournamentWindow::save_file_selected,
       (gpointer) stw_p );
   gtk_widget_show( fs );
   stw_p->set_filesel( fs );
@@ -545,10 +563,11 @@ void
 StartTournamentWindow::save_file_selected( GtkWidget* widget,
                                            class StartTournamentWindow* stw_p )
 {
-  stw_p->save_tournament_file
-    ( String( gtk_file_selection_get_filename
-             ( GTK_FILE_SELECTION( stw_p->get_filesel() ) ) ),
-      true, true );
+  gchar* fname = gtk_file_chooser_get_filename
+    ( GTK_FILE_CHOOSER( stw_p->get_filesel() ) );
+  stw_p->save_tournament_file( String( fname != NULL ? fname : "" ), true, true );
+  if( fname != NULL )
+    g_free( fname );
   destroy_filesel( stw_p->get_filesel(), stw_p );
 }
 

@@ -34,19 +34,19 @@ Dialog::Dialog( const String& info, const List<String>& button_labels,
 {
   // The window
 
-  window_p = gtk_window_new( GTK_WINDOW_DIALOG );
+  window_p = gtk_window_new( GTK_WINDOW_TOPLEVEL );
   gtk_window_set_title( GTK_WINDOW( window_p ), "RealTimeBattle" );
   gtk_widget_set_name( window_p, "RTB Dialog" );
-  gtk_window_set_policy( GTK_WINDOW( window_p ), FALSE, FALSE, FALSE );
-  gtk_window_position( GTK_WINDOW( window_p ), GTK_WIN_POS_CENTER );
-  gtk_container_border_width( GTK_CONTAINER( window_p ), 12 );
-  gtk_signal_connect( GTK_OBJECT( window_p ), "delete_event",
-                      (GtkSignalFunc) gtk_widget_destroy,
+  gtk_window_set_resizable( GTK_WINDOW( window_p ), FALSE );
+  gtk_window_set_position( GTK_WINDOW( window_p ), GTK_WIN_POS_CENTER );
+  gtk_container_set_border_width( GTK_CONTAINER( window_p ), 12 );
+  g_signal_connect( G_OBJECT( window_p ), "delete_event",
+                      (GCallback) gtk_widget_destroy,
                       (gpointer) NULL );
 
   // Main box
 
-  GtkWidget* vbox = gtk_vbox_new( FALSE, 10 );
+  GtkWidget* vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 10 );
   gtk_container_add( GTK_CONTAINER( window_p ), vbox );
   gtk_widget_show( vbox );
 
@@ -58,7 +58,7 @@ Dialog::Dialog( const String& info, const List<String>& button_labels,
 
   // The buttons
 
-  GtkWidget* hbox = gtk_hbox_new( FALSE, 10 );
+  GtkWidget* hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 10 );
   gtk_box_pack_start( GTK_BOX( vbox ), hbox, TRUE, TRUE, 0 );
   gtk_widget_show( hbox );
 
@@ -71,8 +71,8 @@ Dialog::Dialog( const String& info, const List<String>& button_labels,
       list_nr++;
       str = li();
       button_w = gtk_button_new_with_label( str->chars() );
-      gtk_signal_connect( GTK_OBJECT( button_w ), "clicked",
-                          (GtkSignalFunc) Dialog::generate_result,
+      g_signal_connect( G_OBJECT( button_w ), "clicked",
+                          (GCallback) Dialog::generate_result,
                           (gpointer) new result_t( list_nr, func, window_p ) );
       gtk_box_pack_start( GTK_BOX( hbox ), button_w, TRUE, TRUE, 0 );
       gtk_widget_show( button_w );

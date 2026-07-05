@@ -20,7 +20,8 @@ GRAPHICS_O = \
 	MessageWindow.o \
 	OptionsWindow.o \
 	ScoreWindow.o StatisticsWindow.o \
-	StartTournamentWindow.o Structs.o
+	StartTournamentWindow.o Structs.o \
+	CListCompat.o
 endif
 
 INCLUDES = $(GTK_CFLAGS) -I$(top_srcdir)/intl $(PROFFLAGS) $(GRAPHFLAGS)
@@ -73,5 +74,6 @@ EXTRA_RealTimeBattle_SOURCES = \
 	ScoreWindow.cc ScoreWindow.h \
 	StartTournamentWindow.cc StartTournamentWindow.h \
 	StatisticsWindow.cc StatisticsWindow.h \
+	CListCompat.cc CListCompat.h \
 	Structs.cc
 

@@ -45,7 +45,7 @@ private:
   {
     String label;
     bool used;
-    GtkSignalFunc func;
+    GCallback func;
     gpointer data;
   };
 
@@ -82,9 +82,9 @@ public:
   static void delete_event_occured( GtkWidget* widget, GdkEvent* event,
                                     class OptionsWindow* optionswindow_p );
 
-  static void load_options        ( GtkWidget* widget,
+  static void load_options        ( GtkWidget* widget, int response,
                                     class OptionsWindow* optionswindow_p );
-  static void save_options        ( GtkWidget* widget,
+  static void save_options        ( GtkWidget* widget, int response,
                                     class OptionsWindow* optionswindow_p );
   static void destroy_filesel     ( GtkWidget* widget,
                                     class OptionsWindow* optionswindow_p );

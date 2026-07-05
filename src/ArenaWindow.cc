@@ -34,15 +34,36 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include "Structs.h"
 #include "Vector2D.h"
 
-#define GDK_360_DEGREES 23040     // 64 * 360 degrees
-
 extern class ControlWindow* controlwindow_p;
+
+// Convierte un GdkColor (componentes 0..65535) en el color de origen de un
+// contexto Cairo (componentes 0..1). GTK 3 no tiene GdkGC ni dibujo inmediato:
+// todo el dibujo se hace con Cairo sobre una superficie de respaldo.
+static void
+set_cairo_source_gdkcolor( cairo_t* cr, const GdkColor& colour )
+{
+  cairo_set_source_rgb( cr,
+                        colour.red   / 65535.0,
+                        colour.green / 65535.0,
+                        colour.blue  / 65535.0 );
+}
+
+// Wrapper para "delete-event": debe devolver TRUE para que GTK no destruya
+// la ventana (solo la ocultamos).
+static gboolean
+arena_delete_event( GtkWidget* widget, GdkEvent* event, gpointer data )
+{
+  ArenaWindow::hide_window( widget, event, (class ArenaWindow*)data );
+  return TRUE;
+}
 
 ArenaWindow::ArenaWindow( const int default_width,
                           const int default_height,
                           const int default_x_pos,
                           const int default_y_pos )
 {
+  pixmap = NULL;
+
   // The window widget
 
   window_p = gtk_window_new( GTK_WINDOW_TOPLEVEL );
@@ -50,58 +71,53 @@ ArenaWindow::ArenaWindow( const int default_width,
 
   set_window_title();
 
-  gtk_container_border_width( GTK_CONTAINER( window_p ), 12 );
+  gtk_container_set_border_width( GTK_CONTAINER( window_p ), 12 );
 
   if( default_width != -1 && default_height != -1 )
-#if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
     {
       gtk_window_set_default_size( GTK_WINDOW( window_p ),
                                    default_width, default_height );
-      gtk_widget_set_usize( window_p , 185, 120 );
+      gtk_widget_set_size_request( window_p, 185, 120 );
     }
-#else
-  gtk_widget_set_usize( window_p, default_width, default_height );
-#endif
   if( default_x_pos != -1 && default_y_pos != -1 )
-    gtk_widget_set_uposition( window_p, default_x_pos, default_y_pos );
+    gtk_window_move( GTK_WINDOW( window_p ), default_x_pos, default_y_pos );
 
-  gtk_signal_connect( GTK_OBJECT( window_p ), "delete_event",
-                      (GtkSignalFunc) ArenaWindow::hide_window,
-                      (gpointer) this );
+  g_signal_connect( G_OBJECT( window_p ), "delete-event",
+                    G_CALLBACK( arena_delete_event ),
+                    (gpointer) this );
 
   // Main box
 
-  GtkWidget* vbox = gtk_vbox_new( FALSE, 10 );
+  GtkWidget* vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 10 );
   gtk_container_add( GTK_CONTAINER( window_p ), vbox );
   gtk_widget_show( vbox );
-  
+
   // Zoom buttons
 
-  struct button_t { String label; GtkSignalFunc func; };
+  struct button_t { String label; GCallback func; };
 
   struct button_t buttons[] = {
     { (String)_(" No Zoom ") + (String)"[0] ",
-      (GtkSignalFunc) ArenaWindow::no_zoom  },
+      (GCallback) ArenaWindow::no_zoom  },
     { (String)_(" Zoom In ") + (String)"[+] ",
-      (GtkSignalFunc) ArenaWindow::zoom_in  },
+      (GCallback) ArenaWindow::zoom_in  },
     { (String)_(" Zoom Out ") + (String)"[-] ",
-      (GtkSignalFunc) ArenaWindow::zoom_out } };
+      (GCallback) ArenaWindow::zoom_out } };
 
-  GtkWidget* button_table = gtk_table_new( 1, 3, TRUE );
+  GtkWidget* button_table = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 5 );
+  gtk_box_set_homogeneous( GTK_BOX( button_table ), TRUE );
   gtk_box_pack_start( GTK_BOX( vbox ), button_table, FALSE, FALSE, 0 );
 
   for( int i=0; i < 3; i++ )
     {
       GtkWidget* button =
         gtk_button_new_with_label( buttons[i].label.chars() );
-      gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-                          buttons[i].func, (gpointer) this );
-      gtk_table_attach_defaults( GTK_TABLE( button_table ),
-                                 button, i, i+1, 0, 1 );
+      g_signal_connect( G_OBJECT( button ), "clicked",
+                        buttons[i].func, (gpointer) this );
+      gtk_box_pack_start( GTK_BOX( button_table ), button, TRUE, TRUE, 0 );
       gtk_widget_show( button );
     }
 
-  gtk_table_set_col_spacings( GTK_TABLE( button_table ), 5 );
   gtk_widget_show( button_table );
 
   // Scrolled Window
@@ -109,39 +125,35 @@ ArenaWindow::ArenaWindow( const int default_width,
   scrolled_window = gtk_scrolled_window_new( NULL, NULL );
   gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scrolled_window ),
                                   GTK_POLICY_ALWAYS, GTK_POLICY_ALWAYS );
-  gtk_container_add( GTK_CONTAINER( vbox ), scrolled_window );
+  gtk_box_pack_start( GTK_BOX( vbox ), scrolled_window, TRUE, TRUE, 0 );
   gtk_widget_show( scrolled_window );
 
   // Drawing Area
 
   drawing_area = gtk_drawing_area_new();
-  gtk_drawing_area_size( GTK_DRAWING_AREA( drawing_area ),
-                         default_width - 48, default_height - 80 );
-  gtk_signal_connect( GTK_OBJECT( drawing_area ), "expose_event",
-                      (GtkSignalFunc) ArenaWindow::redraw, (gpointer) this );
+  {
+    int da_w = default_width  > 48 ? default_width  - 48 : 137;
+    int da_h = default_height > 80 ? default_height - 80 : 40;
+    gtk_widget_set_size_request( drawing_area, da_w, da_h );
+  }
 
-  gtk_widget_set_events( drawing_area, GDK_EXPOSURE_MASK );
+  g_signal_connect( G_OBJECT( drawing_area ), "draw",
+                    G_CALLBACK( ArenaWindow::draw_cb ), (gpointer) this );
+  g_signal_connect( G_OBJECT( drawing_area ), "configure-event",
+                    G_CALLBACK( ArenaWindow::configure_cb ), (gpointer) this );
 
-#if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
-  gtk_scrolled_window_add_with_viewport
-    ( GTK_SCROLLED_WINDOW( scrolled_window ), drawing_area );
-#else
   gtk_container_add( GTK_CONTAINER( scrolled_window ), drawing_area );
-#endif
   gtk_widget_show( drawing_area );
 
   window_shown = controlwindow_p->is_arenawindow_checked();
 
   zoom = 1;
 
-  gtk_signal_connect( GTK_OBJECT( window_p ), "key_press_event",
-                      (GtkSignalFunc) ArenaWindow::keyboard_handler, this );
+  gtk_widget_add_events( window_p, GDK_KEY_PRESS_MASK );
+  g_signal_connect( G_OBJECT( window_p ), "key_press_event",
+                    G_CALLBACK( ArenaWindow::keyboard_handler ), this );
 
   gtk_widget_show_now( window_p );
-
-  gdk_window_set_background( drawing_area->window,
-                             the_gui.get_bg_gdk_colour_p() );
-  gdk_window_clear( drawing_area->window );
 
   if( !window_shown )
     gtk_widget_hide( window_p );
@@ -149,6 +161,8 @@ ArenaWindow::ArenaWindow( const int default_width,
 
 ArenaWindow::~ArenaWindow()
 {
+  if( pixmap != NULL )
+    cairo_surface_destroy( pixmap );
   gtk_widget_destroy( window_p );
 }
 
@@ -178,11 +192,7 @@ ArenaWindow::hide_window( GtkWidget* widget, GdkEvent* event,
       if( controlwindow_p->is_arenawindow_checked() )
         {
           GtkWidget* menu_item = controlwindow_p->get_show_arena_menu_item();
-#if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
           gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( menu_item ), FALSE );
-#else
-          gtk_check_menu_item_set_state( GTK_CHECK_MENU_ITEM( menu_item ), FALSE );
-#endif
         }
     }
 }
@@ -202,20 +212,13 @@ ArenaWindow::show_window( GtkWidget* widget,
 void
 ArenaWindow::clear_area()
 {
-  if( window_shown )
+  if( window_shown && pixmap != NULL )
     {
-      GdkGC * colour_gc;
-
-      colour_gc = gdk_gc_new( drawing_area->window );
-      gdk_gc_set_foreground( colour_gc, the_gui.get_bg_gdk_colour_p() );
-
-      gdk_draw_rectangle( drawing_area->window,
-                          colour_gc,
-                          true,
-                          0, 0, drawing_area->allocation.width,
-                          drawing_area->allocation.height );
-
-      gdk_gc_destroy( colour_gc );
+      cairo_t* cr = cairo_create( pixmap );
+      set_cairo_source_gdkcolor( cr, *the_gui.get_bg_gdk_colour_p() );
+      cairo_paint( cr );
+      cairo_destroy( cr );
+      gtk_widget_queue_draw( drawing_area );
     }
 }
 
@@ -226,20 +229,20 @@ ArenaWindow::draw_everything()
     {
       clear_area();
 
-      if( ( scrolled_window->allocation.width - 24 != scrolled_window_size[0]) ||
-          ( scrolled_window->allocation.height - 24 !=  scrolled_window_size[1]) )
+      if( ( gtk_widget_get_allocated_width( scrolled_window ) - 24 != scrolled_window_size[0]) ||
+          ( gtk_widget_get_allocated_height( scrolled_window ) - 24 !=  scrolled_window_size[1]) )
         {
           drawing_area_scale_changed();
           return;
         }
-      
+
       List<Shape>* object_lists;
 
       object_lists = the_arena.get_object_lists();
       ListIterator<Shape> li;
 
       // Must begin with innercircles (they are destructive)
-      for( int obj_type=WALL; obj_type < LAST_OBJECT_TYPE ; obj_type++) 
+      for( int obj_type=WALL; obj_type < LAST_OBJECT_TYPE ; obj_type++)
         {
           for( object_lists[obj_type].first(li); li.ok(); li++ )
             {
@@ -263,8 +266,8 @@ ArenaWindow::draw_moving_objects( const bool clear_objects_first )
       List<Shape>* object_lists = the_arena.get_object_lists();
       Robot* robotp;
 
-      if( ( scrolled_window->allocation.width - 24 != scrolled_window_size[0]) ||
-          ( scrolled_window->allocation.height - 24 !=  scrolled_window_size[1]) )
+      if( ( gtk_widget_get_allocated_width( scrolled_window ) - 24 != scrolled_window_size[0]) ||
+          ( gtk_widget_get_allocated_height( scrolled_window ) - 24 !=  scrolled_window_size[1]) )
         {
           drawing_area_scale_changed();
           return;
@@ -293,85 +296,76 @@ void
 ArenaWindow::draw_circle( const Vector2D& center, const double radius,
                           GdkColor& colour, const bool filled )
 {
-  if( window_shown )
+  if( window_shown && pixmap != NULL )
     {
-      GdkGC * colour_gc;
-
-      colour_gc = gdk_gc_new( drawing_area->window );
-      gdk_gc_set_foreground( colour_gc, &colour );
+      cairo_t* cr = cairo_create( pixmap );
+      set_cairo_source_gdkcolor( cr, colour );
 
       double r;
       if( ( r = radius * drawing_area_scale ) > 1.0 )
         {
-          gdk_draw_arc( drawing_area->window,
-                        colour_gc,
-                        filled,
-                        boundary2pixel_x( center[0]-radius ),
-                        boundary2pixel_y( center[1]+radius ),
-                        (int)(r*2.0 + 0.5), (int)(r*2.0 + 0.5),
-                        0, GDK_360_DEGREES );
+          double cx = boundary2pixel_x( center[0] );
+          double cy = boundary2pixel_y( center[1] );
+          cairo_new_path( cr );
+          cairo_arc( cr, cx, cy, r, 0.0, 2.0 * M_PI );
+          if( filled )
+            cairo_fill( cr );
+          else
+            {
+              cairo_set_line_width( cr, 1.0 );
+              cairo_stroke( cr );
+            }
         }
       else
         {
-          gdk_draw_point( drawing_area->window,
-                          colour_gc,
-                          boundary2pixel_x( center[0] ), 
-                          boundary2pixel_y( center[1] ) );
+          double px = boundary2pixel_x( center[0] );
+          double py = boundary2pixel_y( center[1] );
+          cairo_rectangle( cr, px, py, 1.0, 1.0 );
+          cairo_fill( cr );
         }
-      gdk_gc_destroy( colour_gc );
+      cairo_destroy( cr );
+      gtk_widget_queue_draw( drawing_area );
     }
 }
 
 void
-ArenaWindow::draw_arc( const Vector2D& center, 
+ArenaWindow::draw_arc( const Vector2D& center,
                        const double inner_radius, const double outer_radius,
                        const double angle1, const double angle2,
                        GdkColor& colour )
 {
-  if( window_shown )
-    {  
-      const double rad2GDK = ((double)GDK_360_DEGREES) / ( 2.0 * M_PI );
-      
-      gint a1 = (gint)( ( angle1 < 0.0 ? angle1 + 2 * M_PI : angle1 ) 
-                        * rad2GDK + 0.5 );
-      
-      double angle_diff = angle2 - angle1;
-      gint a2 = (gint)( ( angle_diff < 0.0 ? angle_diff + 2 * M_PI : angle_diff ) 
-                        * rad2GDK + 0.5 );
-    
-    
-      GdkGC * colour_gc;
-
-      colour_gc = gdk_gc_new( drawing_area->window );
-      gdk_gc_set_foreground( colour_gc, &colour );
-
-      int line_width = (int)((outer_radius - inner_radius) * drawing_area_scale + 0.5);
-      gdk_gc_set_line_attributes (colour_gc,
-                                  line_width,
-                                  GDK_LINE_SOLID,
-                                  GDK_CAP_NOT_LAST,
-                                  GDK_JOIN_MITER);
-
+  if( window_shown && pixmap != NULL )
+    {
       double r = 0.5 * ( outer_radius + inner_radius );
       int box_size = (int)( r*2.0*drawing_area_scale + 0.5 );
+
+      cairo_t* cr = cairo_create( pixmap );
+      set_cairo_source_gdkcolor( cr, colour );
+
       if( box_size >= 2.0 )
         {
-          gdk_draw_arc( drawing_area->window,
-                        colour_gc,
-                        false,
-                        boundary2pixel_x( center[0] - r ),
-                        boundary2pixel_y( center[1] + r ),
-                        box_size, box_size,
-                        a1, a2 );
+          double cx = boundary2pixel_x( center[0] );
+          double cy = boundary2pixel_y( center[1] );
+          double line_width =
+            ( outer_radius - inner_radius ) * drawing_area_scale;
+          if( line_width < 1.0 ) line_width = 1.0;
+          cairo_set_line_width( cr, line_width );
+          // Cairo mide los angulos en sentido horario (y hacia abajo); el
+          // codigo original usa angulos matematicos (antihorario), por eso
+          // se niegan.
+          cairo_new_path( cr );
+          cairo_arc_negative( cr, cx, cy, r * drawing_area_scale,
+                              -angle1, -angle2 );
+          cairo_stroke( cr );
         }
       else
         {
-          gdk_draw_point( drawing_area->window,
-                          colour_gc,
-                          boundary2pixel_x( center[0] ), 
-                          boundary2pixel_y( center[1] ) );
+          cairo_rectangle( cr, boundary2pixel_x( center[0] ),
+                           boundary2pixel_y( center[1] ), 1.0, 1.0 );
+          cairo_fill( cr );
         }
-      gdk_gc_destroy( colour_gc );
+      cairo_destroy( cr );
+      gtk_widget_queue_draw( drawing_area );
     }
 }
 
@@ -382,22 +376,25 @@ ArenaWindow::draw_rectangle( const Vector2D& start,
                              GdkColor& colour,
                              const bool filled )
 {
-  if( window_shown )
+  if( window_shown && pixmap != NULL )
     {
-      GdkGC * colour_gc;
+      cairo_t* cr = cairo_create( pixmap );
+      set_cairo_source_gdkcolor( cr, colour );
 
-      colour_gc = gdk_gc_new( drawing_area->window );
-      gdk_gc_set_foreground( colour_gc, &colour );
-
-      gdk_draw_rectangle( drawing_area->window,
-                          colour_gc,
-                          filled,
-                          boundary2pixel_x( start[0] ),
-                          boundary2pixel_y( end[1] ),
-                          boundary2pixel_x( end[0] - start[0] ),
-                          boundary2pixel_y( end[1] - start[1] ) );
-
-      gdk_gc_destroy( colour_gc );
+      cairo_rectangle( cr,
+                       boundary2pixel_x( start[0] ),
+                       boundary2pixel_y( end[1] ),
+                       boundary2pixel_x( end[0] - start[0] ),
+                       boundary2pixel_y( end[1] - start[1] ) );
+      if( filled )
+        cairo_fill( cr );
+      else
+        {
+          cairo_set_line_width( cr, 1.0 );
+          cairo_stroke( cr );
+        }
+      cairo_destroy( cr );
+      gtk_widget_queue_draw( drawing_area );
     }
 }
 
@@ -406,14 +403,12 @@ ArenaWindow::draw_line( const Vector2D& start, const Vector2D& direction,
                         const double length, const double thickness,
                         GdkColor& colour )
 {
-  if( window_shown )
+  if( window_shown && pixmap != NULL )
     {
-      GdkGC * colour_gc;
-      GdkPoint g_points[4];
       Vector2D vector_points[4];
 
-      colour_gc = gdk_gc_new( drawing_area->window );
-      gdk_gc_set_foreground( colour_gc, &colour );
+      cairo_t* cr = cairo_create( pixmap );
+      set_cairo_source_gdkcolor( cr, colour );
 
       Vector2D line_thick = unit( direction );
       line_thick = rotate90( line_thick );
@@ -423,14 +418,17 @@ ArenaWindow::draw_line( const Vector2D& start, const Vector2D& direction,
       vector_points[2] = start - line_thick + direction * length;
       vector_points[3] = start + line_thick + direction * length;
 
-      for(int i=0;i<4;i++)
-        {
-          g_points[i].x = boundary2pixel_x( vector_points[i][0] );
-          g_points[i].y = boundary2pixel_y( vector_points[i][1] );
-        }
-      gdk_draw_polygon( drawing_area->window, colour_gc, true, g_points, 4 );
+      cairo_new_path( cr );
+      cairo_move_to( cr, boundary2pixel_x( vector_points[0][0] ),
+                     boundary2pixel_y( vector_points[0][1] ) );
+      for( int i=1; i<4; i++ )
+        cairo_line_to( cr, boundary2pixel_x( vector_points[i][0] ),
+                       boundary2pixel_y( vector_points[i][1] ) );
+      cairo_close_path( cr );
+      cairo_fill( cr );
 
-      gdk_gc_destroy( colour_gc );
+      cairo_destroy( cr );
+      gtk_widget_queue_draw( drawing_area );
     }
 }
 
@@ -438,21 +436,23 @@ void
 ArenaWindow::draw_line( const Vector2D& start, const Vector2D& direction,
                         const double length, GdkColor& colour )
 {
-  if( window_shown )
+  if( window_shown && pixmap != NULL )
     {
-      GdkGC * colour_gc;  
-      colour_gc = gdk_gc_new( drawing_area->window );
-      gdk_gc_set_foreground( colour_gc, &colour );
+      cairo_t* cr = cairo_create( pixmap );
+      set_cairo_source_gdkcolor( cr, colour );
 
       Vector2D end_point = start + length * direction;
 
-      gdk_draw_line( drawing_area->window, colour_gc,
-                     boundary2pixel_x( start[0] ), 
-                     boundary2pixel_y( start[1] ), 
-                     boundary2pixel_x( end_point[0] ), 
+      cairo_set_line_width( cr, 1.0 );
+      cairo_new_path( cr );
+      cairo_move_to( cr, boundary2pixel_x( start[0] ),
+                     boundary2pixel_y( start[1] ) );
+      cairo_line_to( cr, boundary2pixel_x( end_point[0] ),
                      boundary2pixel_y( end_point[1] ) );
+      cairo_stroke( cr );
 
-      gdk_gc_destroy( colour_gc );
+      cairo_destroy( cr );
+      gtk_widget_queue_draw( drawing_area );
     }
 }
 
@@ -461,8 +461,8 @@ ArenaWindow::drawing_area_scale_changed( const bool change_da_value )
 {
   if( window_shown )
     {
-      int width = scrolled_window->allocation.width - 24;
-      int height = scrolled_window->allocation.height - 24;
+      int width = gtk_widget_get_allocated_width( scrolled_window ) - 24;
+      int height = gtk_widget_get_allocated_height( scrolled_window ) - 24;
       scrolled_window_size = Vector2D( (double)width,
                                        (double)height );
       double w = (double)( width * zoom );
@@ -482,21 +482,29 @@ ArenaWindow::drawing_area_scale_changed( const bool change_da_value )
           h = drawing_area_scale * bh;
         }
 
-      gtk_widget_set_usize( drawing_area, (int)w, (int)h );
+      gtk_widget_set_size_request( drawing_area,
+                                   (int)w > 0 ? (int)w : 1,
+                                   (int)h > 0 ? (int)h : 1 );
       if( change_da_value )
         {
           GtkAdjustment* hadj = gtk_scrolled_window_get_hadjustment
             ( (GtkScrolledWindow*) scrolled_window );
-          gtk_adjustment_set_value( hadj,
-                                    ( ( hadj->value + hadj->page_size / 2 ) /
-                                      ( hadj->upper - hadj->lower ) ) *
-                                    (int)w - hadj->page_size / 2 );
+          double hpage = gtk_adjustment_get_page_size( hadj );
+          gtk_adjustment_set_value
+            ( hadj,
+              ( ( gtk_adjustment_get_value( hadj ) + hpage / 2 ) /
+                ( gtk_adjustment_get_upper( hadj ) -
+                  gtk_adjustment_get_lower( hadj ) ) ) *
+              (int)w - hpage / 2 );
           GtkAdjustment* vadj = gtk_scrolled_window_get_vadjustment
             ( (GtkScrolledWindow*) scrolled_window );
-          gtk_adjustment_set_value( vadj,
-                                    ( ( vadj->value + vadj->page_size / 2 ) /
-                                      ( vadj->upper - vadj->lower ) ) *
-                                    (int)h - vadj->page_size / 2 );
+          double vpage = gtk_adjustment_get_page_size( vadj );
+          gtk_adjustment_set_value
+            ( vadj,
+              ( ( gtk_adjustment_get_value( vadj ) + vpage / 2 ) /
+                ( gtk_adjustment_get_upper( vadj ) -
+                  gtk_adjustment_get_lower( vadj ) ) ) *
+              (int)h - vpage / 2 );
         }
       else
         draw_everything();
@@ -538,36 +546,65 @@ ArenaWindow::keyboard_handler( GtkWidget* widget, GdkEventKey *event,
 {
   switch (event->keyval)
     {
-    case GDK_plus:
-    case GDK_KP_Add:
+    case GDK_KEY_plus:
+    case GDK_KEY_KP_Add:
       zoom_in( NULL, arenawindow_p );
       break;
 
-    case GDK_minus:
-    case GDK_KP_Subtract:
+    case GDK_KEY_minus:
+    case GDK_KEY_KP_Subtract:
       zoom_out( NULL, arenawindow_p );
       break;
 
-    case GDK_0:
-    case GDK_KP_0:
-    case GDK_KP_Insert:
+    case GDK_KEY_0:
+    case GDK_KEY_KP_0:
+    case GDK_KEY_KP_Insert:
       no_zoom( NULL, arenawindow_p );
       break;
 
     default:
       return FALSE;
     }
-      
-  gtk_signal_emit_stop_by_name( GTK_OBJECT(widget), "key_press_event" );
+
+  g_signal_stop_emission_by_name( G_OBJECT(widget), "key_press_event" );
   return FALSE;
+}
+
+// (Re)crea la superficie de respaldo cuando cambia el tamano del area de dibujo.
+gint
+ArenaWindow::configure_cb( GtkWidget* widget, GdkEventConfigure* event,
+                           class ArenaWindow* arenawindow_p )
+{
+  if( arenawindow_p->pixmap != NULL )
+    cairo_surface_destroy( arenawindow_p->pixmap );
+
+  int width  = gtk_widget_get_allocated_width( widget );
+  int height = gtk_widget_get_allocated_height( widget );
+
+  arenawindow_p->pixmap =
+    gdk_window_create_similar_surface( gtk_widget_get_window( widget ),
+                                       CAIRO_CONTENT_COLOR,
+                                       width, height );
+
+  cairo_t* cr = cairo_create( arenawindow_p->pixmap );
+  set_cairo_source_gdkcolor( cr, *the_gui.get_bg_gdk_colour_p() );
+  cairo_paint( cr );
+  cairo_destroy( cr );
+
+  if( the_arena_controller.is_started() )
+    arenawindow_p->draw_everything();
+
+  return TRUE;
 }
 
 gint
-ArenaWindow::redraw( GtkWidget* widget, GdkEventExpose* event,
-                     class ArenaWindow* arenawindow_p )
+ArenaWindow::draw_cb( GtkWidget* widget, cairo_t* cr,
+                      class ArenaWindow* arenawindow_p )
 {
-  if( the_arena_controller.is_started() )
-    arenawindow_p->draw_everything();
+  if( arenawindow_p->pixmap != NULL )
+    {
+      cairo_set_source_surface( cr, arenawindow_p->pixmap, 0, 0 );
+      cairo_paint( cr );
+    }
   return FALSE;
 }
-

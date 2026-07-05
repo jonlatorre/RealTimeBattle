@@ -112,8 +112,8 @@ public:
 #ifndef NO_GRAPHICS
 
   int get_row_in_score_clist() { return row_in_score_clist; }
-  void get_score_pixmap( GdkWindow* win, GdkPixmap*& pixm, GdkBitmap*& bitm );
-  void get_stat_pixmap( GdkWindow* win, GdkPixmap*& pixm, GdkBitmap*& bitm );
+  GdkPixbuf* get_score_pixmap();
+  GdkPixbuf* get_stat_pixmap();
 
   void set_row_in_score_clist( int row ) { row_in_score_clist = row; }
   void reset_last_displayed();

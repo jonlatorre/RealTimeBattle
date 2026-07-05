@@ -18,6 +18,7 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <gtk/gtk.h>
+#include "CListCompat.h"
 
 #include "ScoreWindow.h"
 #include "IntlDefs.h"
@@ -41,23 +42,23 @@ ScoreWindow::ScoreWindow( const int default_width,
 
   set_window_title();
 
-  gtk_container_border_width( GTK_CONTAINER( window_p ), 12 );
+  gtk_container_set_border_width( GTK_CONTAINER( window_p ), 12 );
 
   if( default_width != -1 && default_height != -1 )
 #if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
     {
       gtk_window_set_default_size( GTK_WINDOW( window_p ),
                                    default_width, default_height );
-      gtk_widget_set_usize( window_p , 175, 80 );
+      gtk_widget_set_size_request( window_p , 175, 80 );
     }
 #else
-    gtk_widget_set_usize( window_p, default_width, default_height );
+    gtk_widget_set_size_request( window_p, default_width, default_height );
 #endif
   if( default_x_pos != -1 && default_y_pos != -1 )
-    gtk_widget_set_uposition( window_p, default_x_pos, default_y_pos );
+    gtk_window_move( GTK_WINDOW( window_p ), default_x_pos, default_y_pos );
 
-  gtk_signal_connect( GTK_OBJECT( window_p ), "delete_event",
-                      (GtkSignalFunc) ScoreWindow::hide_window,
+  g_signal_connect( G_OBJECT( window_p ), "delete_event",
+                      (GCallback) ScoreWindow::hide_window,
                       (gpointer) this );
 
 #if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
@@ -95,8 +96,9 @@ ScoreWindow::ScoreWindow( const int default_width,
   gtk_clist_set_column_justification( GTK_CLIST( clist ), 5,
                                       GTK_JUSTIFY_RIGHT );
   gtk_clist_column_titles_passive( GTK_CLIST( clist ) );
-  gtk_signal_connect( GTK_OBJECT( clist ), "select_row",
-                      (GtkSignalFunc) new_robot_selected, this );
+  gtk_clist_set_select_callback( GTK_CLIST( clist ),
+                                 (GtkClistSelectFunc) new_robot_selected,
+                                 NULL, this );
 
 #if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
   gtk_clist_set_column_resizeable( GTK_CLIST( clist ), 0, FALSE );
@@ -177,7 +179,7 @@ ScoreWindow::hide_window( GtkWidget* widget, GdkEvent* event,
 #if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
           gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( menu_item ), FALSE );
 #else
-          gtk_check_menu_item_set_state( GTK_CHECK_MENU_ITEM( menu_item ), FALSE );
+          gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( menu_item ), FALSE );
 #endif
         }
     }
@@ -276,12 +278,8 @@ ScoreWindow::add_robots()
 
       robot_p->set_row_in_score_clist( row );
 
-      GdkPixmap* colour_pixmap;
-      GdkBitmap* bitmap_mask;
-      robot_p->get_score_pixmap( window_p->window,
-                                colour_pixmap, bitmap_mask );
-      gtk_clist_set_pixmap( GTK_CLIST( clist ), row, 0,
-                            colour_pixmap, bitmap_mask );
+      GdkPixbuf* colour_pixbuf = robot_p->get_score_pixmap();
+      gtk_clist_set_pixbuf( GTK_CLIST( clist ), row, 0, colour_pixbuf );
       gtk_clist_set_text( GTK_CLIST( clist ), row, 1,
                           robot_p->get_robot_name().non_const_chars() );
       gtk_clist_set_text( GTK_CLIST( clist ), row, 3, "" );

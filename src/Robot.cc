@@ -47,6 +47,10 @@ using namespace std;
 #include <stdio.h>
 
 #include "Robot.h"
+#ifndef NO_GRAPHICS
+#include <gtk/gtk.h>
+#include "CListCompat.h"
+#endif
 #include "String.h"
 #include "ArenaController.h"
 #include "ArenaRealTime.h"
@@ -1779,16 +1783,16 @@ Robot::draw_radar_and_cannon()
                *(the_gui.get_fg_gdk_colour_p()) );
 }
 
-void
-Robot::get_score_pixmap( GdkWindow* win, GdkPixmap*& pixm, GdkBitmap*& bitm )
+GdkPixbuf*
+Robot::get_score_pixmap()
 {
-  score_pixmap.get_pixmap( gdk_colour, win, pixm, bitm ); 
+  return score_pixmap.get_pixbuf( gdk_colour );
 }
 
-void
-Robot::get_stat_pixmap( GdkWindow* win, GdkPixmap*& pixm, GdkBitmap*& bitm )
+GdkPixbuf*
+Robot::get_stat_pixmap()
 {
-  stat_pixmap.get_pixmap( gdk_colour, win, pixm, bitm ); 
+  return stat_pixmap.get_pixbuf( gdk_colour );
 }
 
 #endif NO_GRAPHICS

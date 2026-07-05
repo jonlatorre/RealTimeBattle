@@ -18,6 +18,7 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <gtk/gtk.h>
+#include "CListCompat.h"
 
 #include "StatisticsWindow.h"
 #include "IntlDefs.h"
@@ -45,60 +46,60 @@ StatisticsWindow::StatisticsWindow( const int default_width,
 
   gtk_window_set_title( GTK_WINDOW( window_p ), _("Statistics") );
 
-  gtk_container_border_width( GTK_CONTAINER( window_p ), 12 );
+  gtk_container_set_border_width( GTK_CONTAINER( window_p ), 12 );
 
   if( default_width != -1 && default_height != -1 )
 #if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
     {
       gtk_window_set_default_size( GTK_WINDOW( window_p ),
                                    default_width, default_height );
-      gtk_widget_set_usize( window_p , 364, 130 );
+      gtk_widget_set_size_request( window_p , 364, 130 );
     }
 #else
-    gtk_widget_set_usize( window_p, default_width, default_height );
+    gtk_widget_set_size_request( window_p, default_width, default_height );
 #endif
   if( default_x_pos != -1 && default_y_pos != -1 )
-    gtk_widget_set_uposition( window_p, default_x_pos, default_y_pos );
+    gtk_window_move( GTK_WINDOW( window_p ), default_x_pos, default_y_pos );
 
-  gtk_signal_connect( GTK_OBJECT( window_p ), "delete_event",
-                      (GtkSignalFunc) StatisticsWindow::delete_event_occured,
+  g_signal_connect( G_OBJECT( window_p ), "delete_event",
+                      (GCallback) StatisticsWindow::delete_event_occured,
                       (gpointer) this );
 
   // Main box
 
-  GtkWidget* vbox = gtk_vbox_new( FALSE, 10 );
+  GtkWidget* vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 10 );
   gtk_container_add( GTK_CONTAINER( window_p ) ,vbox );
   gtk_widget_show( vbox );
 
   // Buttons for displaying different types of statistics
 
-  GtkWidget* hbox = gtk_hbox_new( FALSE, 10 );
+  GtkWidget* hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 10 );
   gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
   gtk_widget_show( hbox );
 
   {
-    struct button_t { String label; GtkSignalFunc func; gpointer data; };
+    struct button_t { String label; GCallback func; gpointer data; };
 
     struct button_t buttons[] = {
-      { (String)_(" Close "), (GtkSignalFunc) StatisticsWindow::exit,
+      { (String)_(" Close "), (GCallback) StatisticsWindow::exit,
         (gpointer) this },
-      { (String)_(" Save Statistics "), (GtkSignalFunc) StatisticsWindow::save,
+      { (String)_(" Save Statistics "), (GCallback) StatisticsWindow::save,
         (gpointer) this },
-      { (String)_(" Total "), (GtkSignalFunc) StatisticsWindow::change_table_type,
+      { (String)_(" Total "), (GCallback) StatisticsWindow::change_table_type,
         (gpointer) new change_type_data_t( STAT_TYPE_TOTAL, this ) },
-      { (String)_(" Sequence Total "), (GtkSignalFunc) StatisticsWindow::change_table_type,
+      { (String)_(" Sequence Total "), (GCallback) StatisticsWindow::change_table_type,
         (gpointer) new change_type_data_t( STAT_TYPE_SEQUENCE, this ) },
       { (String)" " + (String)_("Game") + (String)" ",
-        (GtkSignalFunc) StatisticsWindow::change_table_type,
+        (GCallback) StatisticsWindow::change_table_type,
         (gpointer) new change_type_data_t( STAT_TYPE_GAME, this ) },
-      { (String)_(" Robot "), (GtkSignalFunc) StatisticsWindow::change_table_type,
+      { (String)_(" Robot "), (GCallback) StatisticsWindow::change_table_type,
         (gpointer) new change_type_data_t( STAT_TYPE_ROBOT, this ) } };
 
     GtkWidget* button_w;
     for( int i=0; i<6; i++ )
       {
         button_w = gtk_button_new_with_label( buttons[i].label.chars() );
-        gtk_signal_connect( GTK_OBJECT( button_w ), "clicked",
+        g_signal_connect( G_OBJECT( button_w ), "clicked",
                             buttons[i].func, buttons[i].data );
         gtk_box_pack_start( GTK_BOX( hbox ), button_w, TRUE, TRUE, 0 );
         gtk_widget_show( button_w );
@@ -107,7 +108,7 @@ StatisticsWindow::StatisticsWindow( const int default_width,
 
   gtk_widget_show( window_p );
 
-  hbox = gtk_hbox_new( FALSE, 10 );
+  hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 10 );
   gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
   gtk_widget_show( hbox );
 
@@ -170,18 +171,18 @@ StatisticsWindow::StatisticsWindow( const int default_width,
       "xx         xx" };
 
     struct button_t
-    { char** xpm; GtkSignalFunc func; gpointer data; int pack; };
+    { char** xpm; GCallback func; gpointer data; int pack; };
 
     struct button_t buttons[] = {
-      { first_xpm, (GtkSignalFunc) StatisticsWindow::change_stats_viewed,
+      { first_xpm, (GCallback) StatisticsWindow::change_stats_viewed,
         (gpointer) new change_stat_data_t( -1, true, this ), FALSE },
-      { prev_xpm, (GtkSignalFunc) StatisticsWindow::change_stats_viewed,
+      { prev_xpm, (GCallback) StatisticsWindow::change_stats_viewed,
         (gpointer) new change_stat_data_t( -1, false, this ), FALSE },
-      { NULL, (GtkSignalFunc) StatisticsWindow::add_the_statistics_to_clist,
+      { NULL, (GCallback) StatisticsWindow::add_the_statistics_to_clist,
         (gpointer) this, TRUE },
-      { next_xpm, (GtkSignalFunc) StatisticsWindow::change_stats_viewed,
+      { next_xpm, (GCallback) StatisticsWindow::change_stats_viewed,
         (gpointer) new change_stat_data_t( 1, false, this ), FALSE },
-      { last_xpm, (GtkSignalFunc) StatisticsWindow::change_stats_viewed,
+      { last_xpm, (GCallback) StatisticsWindow::change_stats_viewed,
         (gpointer) new change_stat_data_t( 1, true, this ), FALSE } };
 
     for( int i=0; i<5; i++ )
@@ -189,24 +190,19 @@ StatisticsWindow::StatisticsWindow( const int default_width,
         GtkWidget* button_w = gtk_button_new();
         if( buttons[i].xpm != NULL )
           {
-            GdkPixmap* pixmap;
-            GdkBitmap* bitmap_mask;
-
-            pixmap = gdk_pixmap_create_from_xpm_d( window_p->window,
-                                                   &bitmap_mask,
-                                                   &(window_p->style->black),
-                                                   buttons[i].xpm );
-            GtkWidget* pixmap_widget = gtk_pixmap_new( pixmap, bitmap_mask );
+            GdkPixbuf* pixbuf =
+              gdk_pixbuf_new_from_xpm_data( (const char**) buttons[i].xpm );
+            GtkWidget* pixmap_widget = gtk_image_new_from_pixbuf( pixbuf );
             gtk_widget_show( pixmap_widget );
             gtk_container_add( GTK_CONTAINER( button_w ), pixmap_widget );
-            gtk_widget_set_usize( button_w, 24, 20 );
+            gtk_widget_set_size_request( button_w, 24, 20 );
           }
         else
           {
             title_button = button_w;
             title_button_hbox = NULL;
           }
-        gtk_signal_connect( GTK_OBJECT( button_w ), "clicked",
+        g_signal_connect( G_OBJECT( button_w ), "clicked",
                             buttons[i].func, buttons[i].data );
         gtk_box_pack_start( GTK_BOX( hbox ), button_w,
                             buttons[i].pack, buttons[i].pack, 0 );
@@ -251,42 +247,23 @@ StatisticsWindow::StatisticsWindow( const int default_width,
   gtk_clist_set_column_justification( GTK_CLIST( clist ), 6,
                                       GTK_JUSTIFY_RIGHT );
   gtk_clist_column_title_passive( GTK_CLIST( clist ), 0 );
-  gtk_signal_connect( GTK_OBJECT( clist ), "select_row",
-                      (GtkSignalFunc) row_selected, this );
+  gtk_clist_set_select_callback( GTK_CLIST( clist ),
+                                 (GtkClistSelectFunc) row_selected,
+                                 NULL, this );
 
-#if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
-  gtk_clist_set_column_resizeable( GTK_CLIST( clist ), 0, FALSE );
-  gtk_clist_set_column_max_width( GTK_CLIST( clist ), 0, 5 );
-
-  gtk_clist_set_shadow_type( GTK_CLIST( clist ), GTK_SHADOW_IN );
   gtk_clist_set_compare_func( GTK_CLIST( clist ), float_compare );
   gtk_clist_set_sort_column( GTK_CLIST( clist ), 6 );
   gtk_clist_set_sort_type( GTK_CLIST( clist ), GTK_SORT_DESCENDING );
 
-  for( int i=2; i <=6; i++ )
-    gtk_clist_set_column_auto_resize( GTK_CLIST( clist ), i, TRUE );
+  gtk_clist_set_click_column_callback( GTK_CLIST( clist ),
+                                       (GtkClistClickColumnFunc)
+                                       change_sorting_in_clist,
+                                       (gpointer) this );
 
-  gtk_signal_connect( GTK_OBJECT( clist ), "click_column",
-                      (GtkSignalFunc) change_sorting_in_clist,
-                      (gpointer) this );
-  gtk_container_add( GTK_CONTAINER( scrolled_win ), clist );
-
-  GtkStyle* clist_style = gtk_rc_get_style(window_p);
-  if( clist_style == NULL )
-    clist_style = gtk_style_new();
-  else
-    clist_style = gtk_style_copy(clist_style);
-  clist_style->base[GTK_STATE_NORMAL] = *(the_gui.get_bg_gdk_colour_p());
-  clist_style->base[GTK_STATE_ACTIVE] = make_gdk_colour( 0xffffff );
-  clist_style->bg[GTK_STATE_SELECTED] = make_gdk_colour( 0xf0d2b4 );
-  clist_style->fg[GTK_STATE_SELECTED] = *(the_gui.get_fg_gdk_colour_p());
-  gtk_widget_set_style( clist, clist_style );
-#else
   gtk_clist_set_border( GTK_CLIST( clist ), GTK_SHADOW_IN );
   gtk_clist_set_policy( GTK_CLIST( clist ), GTK_POLICY_AUTOMATIC,
                        GTK_POLICY_AUTOMATIC );
   gtk_box_pack_start( GTK_BOX( vbox ), clist, TRUE, TRUE, 0 );
-#endif
   gtk_widget_show( clist );
 
   add_the_statistics_to_clist( clist, this );
@@ -317,29 +294,32 @@ StatisticsWindow::save( GtkWidget* widget, class StatisticsWindow* sw_p )
     return;
 
   GtkWidget* fs =
-    gtk_file_selection_new( _("Choose a statistics file to save") );
-  gtk_signal_connect( GTK_OBJECT( fs ), "destroy",
-                      (GtkSignalFunc) StatisticsWindow::destroy_filesel,
-                      (gpointer) sw_p );
-  gtk_signal_connect
-    ( GTK_OBJECT( GTK_FILE_SELECTION( fs )->cancel_button ), "clicked",
-      (GtkSignalFunc) StatisticsWindow::destroy_filesel,
-      (gpointer) sw_p );
-  gtk_signal_connect
-    ( GTK_OBJECT( GTK_FILE_SELECTION( fs )->ok_button ), "clicked",
-      (GtkSignalFunc) StatisticsWindow::save_stats,
-      (gpointer) sw_p );
-  gtk_widget_show( fs );
+    gtk_file_chooser_dialog_new( _("Choose a statistics file to save"),
+                                 GTK_WINDOW( sw_p->get_window_p() ),
+                                 GTK_FILE_CHOOSER_ACTION_SAVE,
+                                 _("Cancel"), GTK_RESPONSE_CANCEL,
+                                 _("Save"), GTK_RESPONSE_ACCEPT,
+                                 NULL );
   sw_p->set_filesel( fs );
+
+  gint response = gtk_dialog_run( GTK_DIALOG( fs ) );
+  if( response == GTK_RESPONSE_ACCEPT )
+    save_stats( fs, sw_p );
+  else
+    destroy_filesel( fs, sw_p );
 }
 
 void
 StatisticsWindow::save_stats( GtkWidget* widget,
                               class StatisticsWindow* sw_p )
 {
-  the_arena.save_statistics_to_file
-    ( gtk_file_selection_get_filename
-      ( GTK_FILE_SELECTION( sw_p->get_filesel() ) ) );
+  gchar* filename =
+    gtk_file_chooser_get_filename( GTK_FILE_CHOOSER( sw_p->get_filesel() ) );
+  if( filename != NULL )
+    {
+      the_arena.save_statistics_to_file( filename );
+      g_free( filename );
+    }
   destroy_filesel( sw_p->get_filesel(), sw_p );
 }
 
@@ -498,7 +478,7 @@ StatisticsWindow::make_title_button()
 {
   if( title_button_hbox != NULL )
     gtk_widget_destroy( title_button_hbox );
-  title_button_hbox = gtk_hbox_new( FALSE, 10 );
+  title_button_hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 10 );
   gtk_container_add( GTK_CONTAINER( title_button ), title_button_hbox );
   gtk_widget_show( title_button_hbox );
 
@@ -537,10 +517,8 @@ StatisticsWindow::make_title_button()
             robot_p = li();
             if( looking_at_nr == i )
               {
-                GdkPixmap* col_pixmap;
-                GdkBitmap* bitmap_mask;
-                robot_p->get_stat_pixmap(window_p->window, col_pixmap, bitmap_mask);
-                GtkWidget* pixmap_w = gtk_pixmap_new( col_pixmap, bitmap_mask );
+                GdkPixbuf* col_pixbuf = robot_p->get_stat_pixmap();
+                GtkWidget* pixmap_w = gtk_image_new_from_pixbuf( col_pixbuf );
                 gtk_box_pack_start( GTK_BOX( title_button_hbox ),
                                     pixmap_w, FALSE, FALSE, 0 );
                 gtk_widget_show( pixmap_w );
@@ -571,14 +549,9 @@ StatisticsWindow::add_new_row( Robot* robot_p, stat_t average_stat,
       type == STAT_TYPE_SEQUENCE ||
       type == STAT_TYPE_TOTAL)
     {
-      GdkPixmap * colour_pixmap;
-      GdkBitmap * bitmap_mask;
+      GdkPixbuf* colour_pixbuf = robot_p->get_stat_pixmap();
 
-      robot_p->get_stat_pixmap( window_p->window,
-                                colour_pixmap, bitmap_mask );
-
-      gtk_clist_set_pixmap( GTK_CLIST( clist ), row, 0,
-                            colour_pixmap, bitmap_mask );
+      gtk_clist_set_pixbuf( GTK_CLIST( clist ), row, 0, colour_pixbuf );
       gtk_clist_set_text( GTK_CLIST( clist ), row, 1,
                           robot_p->get_robot_name().non_const_chars() );
     }
@@ -759,10 +732,9 @@ StatisticsWindow::add_the_statistics_to_clist( GtkWidget* widget,
 }
 
 void
-StatisticsWindow::change_sorting_in_clist( GtkCList* clist, gint column,
+StatisticsWindow::change_sorting_in_clist( GtkWidget* clist, gint column,
                                            class StatisticsWindow* sw_p )
 {
-#if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
   stat_types sw_type = sw_p->get_type();
   
   gtk_clist_freeze( clist );
@@ -819,7 +791,6 @@ StatisticsWindow::change_sorting_in_clist( GtkCList* clist, gint column,
     }
   add_the_statistics_to_clist( GTK_WIDGET( clist ), sw_p );
   gtk_clist_thaw( clist );
-#endif
 }
 
 void

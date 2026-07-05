@@ -115,7 +115,7 @@ rtbheader_DATA = Messagetypes.h
 
 @ENABLE_PROF_TRUE@PROFFLAGS = -pg
 @NO_GRAPHICS_TRUE@GRAPHICS_O = 
-@NO_GRAPHICS_FALSE@GRAPHICS_O = 	Gui.o ArenaWindow.o 	ControlWindow.o Dialog.o 	MessageWindow.o 	OptionsWindow.o 	ScoreWindow.o StatisticsWindow.o 	StartTournamentWindow.o Structs.o
+@NO_GRAPHICS_FALSE@GRAPHICS_O = 	Gui.o ArenaWindow.o 	ControlWindow.o Dialog.o 	MessageWindow.o 	OptionsWindow.o 	ScoreWindow.o StatisticsWindow.o 	StartTournamentWindow.o Structs.o 	CListCompat.o
 @NO_GRAPHICS_TRUE@GRAPHFLAGS =  -DNO_GRAPHICS 
 
 INCLUDES = $(GTK_CFLAGS) -I$(top_srcdir)/intl $(PROFFLAGS) $(GRAPHFLAGS)

@@ -91,7 +91,7 @@ public:
                                        struct change_stat_data_t* info_p );
   static void add_the_statistics_to_clist( GtkWidget* widget,
                                            class StatisticsWindow* sw_p );
-  static void change_sorting_in_clist( GtkCList *clist, gint column,
+  static void change_sorting_in_clist( GtkWidget *clist, gint column,
                                        class StatisticsWindow* sw_p );
   static void row_selected           ( GtkWidget* clist,
                                        gint row, gint column,

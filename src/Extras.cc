@@ -41,7 +41,7 @@ Extras::Extras(const Vector2D& c, const double r, const double e, const long int
 #endif
 }
 
-Cookie::Cookie(const Vector2D& c, const double e, const int c_id = -1) 
+Cookie::Cookie(const Vector2D& c, const double e, const int c_id)
   : Extras(c, the_opts.get_d(OPTION_COOKIE_RADIUS), e, 
            the_opts.get_l(OPTION_COOKIE_COLOUR))
 { 

@@ -18,6 +18,7 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <gtk/gtk.h>
+#include "CListCompat.h"
 
 #include "MessageWindow.h"
 #include "IntlDefs.h"
@@ -46,51 +47,51 @@ MessageWindow::MessageWindow( const int default_width,
 
   set_window_title();
 
-  gtk_container_border_width( GTK_CONTAINER( window_p ), 12 );
+  gtk_container_set_border_width( GTK_CONTAINER( window_p ), 12 );
 
   if( default_width != -1 && default_height != -1 )
 #if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
     {
       gtk_window_set_default_size( GTK_WINDOW( window_p ),
                                    default_width, default_height );
-      gtk_widget_set_usize( window_p , 300, 110 );
+      gtk_widget_set_size_request( window_p , 300, 110 );
     }
 #else
-    gtk_widget_set_usize( window_p, default_width, default_height );
+    gtk_widget_set_size_request( window_p, default_width, default_height );
 #endif
   if( default_x_pos != -1 && default_y_pos != -1 )
-    gtk_widget_set_uposition( window_p, default_x_pos, default_y_pos );
+    gtk_window_move( GTK_WINDOW( window_p ), default_x_pos, default_y_pos );
 
-  gtk_signal_connect( GTK_OBJECT( window_p ), "delete_event",
-                      (GtkSignalFunc) MessageWindow::hide_window,
+  g_signal_connect( G_OBJECT( window_p ), "delete_event",
+                      (GCallback) MessageWindow::hide_window,
                       (gpointer) this );
 
   // Main box
 
-  GtkWidget* vbox = gtk_vbox_new( FALSE, 10 );
+  GtkWidget* vbox = gtk_box_new( GTK_ORIENTATION_VERTICAL, 10 );
   gtk_container_add( GTK_CONTAINER( window_p ), vbox );
   gtk_widget_show( vbox );
 
   // Buttons
 
-  GtkWidget* hbox = gtk_hbox_new( FALSE, 10 );
+  GtkWidget* hbox = gtk_box_new( GTK_ORIENTATION_HORIZONTAL, 10 );
   gtk_box_pack_start( GTK_BOX( vbox ), hbox, FALSE, FALSE, 0 );
   gtk_widget_show( hbox );
 
-  struct button_t { String label; GtkSignalFunc func; };
+  struct button_t { String label; GCallback func; };
   struct button_t buttons[] = {
     { (String)_(" Clear all messages "), 
-      (GtkSignalFunc) MessageWindow::clear_clist },
+      (GCallback) MessageWindow::clear_clist },
     { (String)_(" Show only marked robot "), 
-      (GtkSignalFunc) MessageWindow::show_one_robot },
+      (GCallback) MessageWindow::show_one_robot },
     { (String)_(" Show all "),
-      (GtkSignalFunc) MessageWindow::show_all } };
+      (GCallback) MessageWindow::show_all } };
   for(int i = 0;i < 3; i++)
     {
       GtkWidget* button =
         gtk_button_new_with_label( buttons[i].label.chars() );
-      gtk_signal_connect( GTK_OBJECT( button ), "clicked",
-                          (GtkSignalFunc) buttons[i].func,
+      g_signal_connect( G_OBJECT( button ), "clicked",
+                          (GCallback) buttons[i].func,
                           (gpointer) this );
       gtk_box_pack_start( GTK_BOX( hbox ), button,
                           TRUE, TRUE, 0 );
@@ -278,7 +279,7 @@ MessageWindow::hide_window( GtkWidget* widget, GdkEvent* event,
 #if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
           gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( menu_item ), FALSE );
 #else
-          gtk_check_menu_item_set_state( GTK_CHECK_MENU_ITEM( menu_item ), FALSE );
+          gtk_check_menu_item_set_active( GTK_CHECK_MENU_ITEM( menu_item ), FALSE );
 #endif
         }
     }

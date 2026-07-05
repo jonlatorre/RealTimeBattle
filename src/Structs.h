@@ -75,17 +75,17 @@ struct start_tournament_info_t
 
 #ifndef NO_GRAPHICS
 
+// En GTK 3 no existen GdkPixmap/GdkBitmap: el icono de color de cada robot
+// (un cuadrado 16x16 de color solido) se representa con un GdkPixbuf que se
+// muestra en una columna GtkCellRendererPixbuf del GtkTreeView.
 struct pixmap_t
 {
-  pixmap_t() : pixmap(NULL), window(NULL) {}
+  pixmap_t() : pixbuf(NULL) {}
   ~pixmap_t();
 
-  void set_pixmap(GdkColor& col, GdkWindow* win);
-  void get_pixmap(GdkColor& col, GdkWindow* win, GdkPixmap*& pixm, GdkBitmap*& bitm);
+  GdkPixbuf* get_pixbuf(GdkColor& col);
 
-  GdkPixmap* pixmap;
-  GdkWindow* window;
-  GdkBitmap* bitmap;
+  GdkPixbuf* pixbuf;
 };
     
 #endif NO_GRAPHICS

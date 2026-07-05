@@ -391,7 +391,7 @@ main ( int argc, char* argv[] )
 
 #ifndef NO_GRAPHICS
 #ifdef HAVE_LOCALE_H
-  gtk_set_locale();
+  setlocale( LC_ALL, "" );   // gtk_set_locale() se elimino en GTK 3
 #endif
 
   gtk_init (&argc, &argv);
@@ -432,8 +432,8 @@ main ( int argc, char* argv[] )
 
   gint timeout_tag;      
   double interval = 1000.0*the_opts.get_d( OPTION_UPDATE_INTERVAL ) - 10.0; 
-  timeout_tag = gtk_timeout_add( (unsigned int) interval,
-                                 GtkFunction(update_function), (gpointer) NULL );
+  timeout_tag = g_timeout_add( (unsigned int) interval,
+                                 GSourceFunc(update_function), (gpointer) NULL );
 
   gtk_main();
 

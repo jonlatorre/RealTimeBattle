@@ -36,8 +36,14 @@ struct _GdkEventKey;
 typedef struct _GdkEventKey GdkEventKey;
 struct _GdkEventExpose;
 typedef struct _GdkEventExpose GdkEventExpose;
+struct _GdkEventConfigure;
+typedef struct _GdkEventConfigure GdkEventConfigure;
 struct _GdkColor;
 typedef struct _GdkColor GdkColor;
+struct _cairo;
+typedef struct _cairo cairo_t;
+struct _cairo_surface;
+typedef struct _cairo_surface cairo_surface_t;
 typedef void* gpointer;
 typedef int gint;
 
@@ -63,8 +69,11 @@ public:
                                      class ArenaWindow* arenawindow_p );
   static void zoom_out             ( GtkWidget* widget,
                                      class ArenaWindow* arenawindow_p );
-  static gint redraw               ( GtkWidget* widget,
-                                     GdkEventExpose* event,
+  static gint draw_cb              ( GtkWidget* widget,
+                                     cairo_t* cr,
+                                     class ArenaWindow* arenawindow_p );
+  static gint configure_cb         ( GtkWidget* widget,
+                                     GdkEventConfigure* event,
                                      class ArenaWindow* arenawindow_p );
   static gint keyboard_handler     ( GtkWidget *widget, GdkEventKey *event,
                                      class ArenaWindow* arenawindow_p );
@@ -114,6 +123,8 @@ private:
   GtkWidget* window_p;
   GtkWidget* scrolled_window;
   GtkWidget* drawing_area;
+
+  cairo_surface_t* pixmap;   // backing store (GTK 3 usa Cairo, no dibujo inmediato)
 
   Vector2D scrolled_window_size;
   int zoom; // The zoom when pressed on one of the zoombuttons

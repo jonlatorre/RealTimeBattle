@@ -152,15 +152,14 @@ reorder_pointer_array(void** array, int size)
 GdkColor
 make_gdk_colour(const long col)
 {
-  GdkColormap *cmap;
+  // En GTK 3 los colores ya no se reservan en un GdkColormap: basta con
+  // fijar las componentes de 16 bits del GdkColor.
   GdkColor colour;
 
-  cmap = gdk_colormap_get_system();
+  colour.pixel = 0;
   colour.red =   ((col & 0xff0000) >> 16 ) * 0x101;
   colour.green = ((col & 0x00ff00) >> 8  ) * 0x101;
   colour.blue =  (col & 0x0000ff) * 0x101;
-  if( !gdk_color_alloc (cmap, &colour) )
-    Error(true, "Couldn't allocate colour", "Various:make_gdk_color");
 
   return colour;
 }
@@ -553,182 +552,48 @@ entry_handler( GtkWidget * entry, entry_t * entry_info )
     gtk_entry_set_text(GTK_ENTRY(entry),entry_text.chars());
 }
 
-#if GTK_MAJOR_VERSION == 1 && GTK_MINOR_VERSION >= 1
+// Funciones de comparacion para la ordenacion del "clist" (ahora GtkTreeView
+// via CListCompat). Reciben directamente el texto de la columna de orden de
+// dos filas; el shim se encarga de extraerlo del modelo.
 gint
-int_compare(GtkCList* clist, gconstpointer ptr1, gconstpointer ptr2)
+int_compare( const gchar* text1, const gchar* text2 )
 {
-  char* text1 = NULL;
-  char* text2 = NULL;
-
-  GtkCListRow* row1 = (GtkCListRow*) ptr1;
-  GtkCListRow* row2 = (GtkCListRow*) ptr2;
-
-  switch (row1->cell[clist->sort_column].type)
-    {
-    case GTK_CELL_TEXT:
-      text1 = GTK_CELL_TEXT (row1->cell[clist->sort_column])->text;
-      break;
-    case GTK_CELL_PIXTEXT:
-      text1 = GTK_CELL_PIXTEXT (row1->cell[clist->sort_column])->text;
-      break;
-    default:
-      break;
-    }
- 
-  switch (row2->cell[clist->sort_column].type)
-    {
-    case GTK_CELL_TEXT:
-      text2 = GTK_CELL_TEXT (row2->cell[clist->sort_column])->text;
-      break;
-    case GTK_CELL_PIXTEXT:
-      text2 = GTK_CELL_PIXTEXT (row2->cell[clist->sort_column])->text;
-      break;
-    default:
-      break;
-    }
-
-  if (!text2)
-    return (text1 != NULL);
-
-  if (!text1)
-    return -1;
-
-  return (str2int(text1) - str2int(text2));
+  if( !text2 ) return ( text1 != NULL );
+  if( !text1 ) return -1;
+  return ( str2int( (char*)text1 ) - str2int( (char*)text2 ) );
 }
 
 gint
-float_compare(GtkCList *clist, gconstpointer ptr1, gconstpointer ptr2)
+float_compare( const gchar* text1, const gchar* text2 )
 {
-  char* text1 = NULL;
-  char* text2 = NULL;
+  if( !text2 ) return ( text1 != NULL );
+  if( !text1 ) return -1;
 
-  GtkCListRow* row1 = (GtkCListRow*) ptr1;
-  GtkCListRow* row2 = (GtkCListRow*) ptr2;
+  double n1 = str2dbl( (char*)text1 );
+  double n2 = str2dbl( (char*)text2 );
 
-  switch (row1->cell[clist->sort_column].type)
-    {
-    case GTK_CELL_TEXT:
-      text1 = GTK_CELL_TEXT (row1->cell[clist->sort_column])->text;
-      break;
-    case GTK_CELL_PIXTEXT:
-      text1 = GTK_CELL_PIXTEXT (row1->cell[clist->sort_column])->text;
-      break;
-    default:
-      break;
-    }
- 
-  switch (row2->cell[clist->sort_column].type)
-    {
-    case GTK_CELL_TEXT:
-      text2 = GTK_CELL_TEXT (row2->cell[clist->sort_column])->text;
-      break;
-    case GTK_CELL_PIXTEXT:
-      text2 = GTK_CELL_PIXTEXT (row2->cell[clist->sort_column])->text;
-      break;
-    default:
-      break;
-    }
-
-  if (!text2)
-    return (text1 != NULL);
-
-  if (!text1)
-    return -1;
-
-  double n1 = str2dbl(text1);
-  double n2 = str2dbl(text2);
-
-  if(n1 > n2)
+  if( n1 > n2 )
     return 1;
-  else if(n2 > n1)
+  else if( n2 > n1 )
     return -1;
 
   return 0;
 }
 
 gint
-string_case_sensitive_compare(GtkCList *clist, gconstpointer ptr1, gconstpointer ptr2)
+string_case_sensitive_compare( const gchar* text1, const gchar* text2 )
 {
-  char *text1 = NULL;
-  char *text2 = NULL;
-
-  GtkCListRow *row1 = (GtkCListRow *) ptr1;
-  GtkCListRow *row2 = (GtkCListRow *) ptr2;
-
-  switch (row1->cell[clist->sort_column].type)
-    {
-    case GTK_CELL_TEXT:
-      text1 = GTK_CELL_TEXT (row1->cell[clist->sort_column])->text;
-      break;
-    case GTK_CELL_PIXTEXT:
-      text1 = GTK_CELL_PIXTEXT (row1->cell[clist->sort_column])->text;
-      break;
-    default:
-      break;
-    }
- 
-  switch (row2->cell[clist->sort_column].type)
-    {
-    case GTK_CELL_TEXT:
-      text2 = GTK_CELL_TEXT (row2->cell[clist->sort_column])->text;
-      break;
-    case GTK_CELL_PIXTEXT:
-      text2 = GTK_CELL_PIXTEXT (row2->cell[clist->sort_column])->text;
-      break;
-    default:
-      break;
-    }
-
-  if (!text2)
-    return (text1 != NULL);
-
-  if (!text1)
-    return -1;
-
-  return strcmp (text1, text2);
+  if( !text2 ) return ( text1 != NULL );
+  if( !text1 ) return -1;
+  return strcmp( text1, text2 );
 }
 
 gint
-string_case_insensitive_compare(GtkCList *clist, gconstpointer ptr1, gconstpointer ptr2)
+string_case_insensitive_compare( const gchar* text1, const gchar* text2 )
 {
-  char *text1 = NULL;
-  char *text2 = NULL;
-
-  GtkCListRow *row1 = (GtkCListRow *) ptr1;
-  GtkCListRow *row2 = (GtkCListRow *) ptr2;
-
-  switch (row1->cell[clist->sort_column].type)
-    {
-    case GTK_CELL_TEXT:
-      text1 = GTK_CELL_TEXT (row1->cell[clist->sort_column])->text;
-      break;
-    case GTK_CELL_PIXTEXT:
-      text1 = GTK_CELL_PIXTEXT (row1->cell[clist->sort_column])->text;
-      break;
-    default:
-      break;
-    }
- 
-  switch (row2->cell[clist->sort_column].type)
-    {
-    case GTK_CELL_TEXT:
-      text2 = GTK_CELL_TEXT (row2->cell[clist->sort_column])->text;
-      break;
-    case GTK_CELL_PIXTEXT:
-      text2 = GTK_CELL_PIXTEXT (row2->cell[clist->sort_column])->text;
-      break;
-    default:
-      break;
-    }
-
-  if (!text2)
-    return (text1 != NULL);
-
-  if (!text1)
-    return -1;
-
-  return strcasecmp (text1, text2);
+  if( !text2 ) return ( text1 != NULL );
+  if( !text1 ) return -1;
+  return g_ascii_strcasecmp( text1, text2 );
 }
-#endif
 
 #endif NO_GRAPHICS
