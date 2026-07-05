@@ -35,10 +35,17 @@ typedef void (*StartTournamentFunction)( const List<start_tournament_info_t>&,
                                          const List<start_tournament_info_t>&,
                                          const int, const int, const int, void* );
 
-#define min(a,b) ((a) < (b) ? (a) : (b))
-#define max(a,b) ((a) > (b) ? (a) : (b))
-#define abs(a) ((a) > 0 ? (a) : -(a))
-#define sgn(a) ((a) > 0 ? 1 : -1)
+// Antes eran macros min/max/abs/sgn, pero colisionaban con la biblioteca
+// estándar de C++ (p.ej. <fstream>/<algorithm> usan esos identificadores),
+// rompiendo la compilación con algunas versiones de libstdc++. Ahora son
+// funciones inline con nombre propio.
+// El tipo de retorno se deduce con decltype(a + b) (tipo aritmético común por
+// VALOR). Usar decltype(a < b ? a : b) daría una referencia (const T&) a un
+// parámetro local -> referencia colgante y lectura de basura.
+template<class T, class U> inline auto rtb_min( const T a, const U b ) -> decltype( a + b ) { return a < b ? a : b; }
+template<class T, class U> inline auto rtb_max( const T a, const U b ) -> decltype( a + b ) { return a > b ? a : b; }
+template<class T> inline T rtb_abs( const T a ) { return a > 0 ? a : -a; }
+template<class T> inline int rtb_sgn( const T a ) { return a > 0 ? 1 : -1; }
 
 enum entry_datatype_t
 {

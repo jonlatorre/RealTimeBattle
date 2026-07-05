@@ -672,11 +672,11 @@ ArenaRealTime::colour_dist(const long col1, const long int col2)
             fabs(blue1 -blue2 ) * log(1.0 + sqrt(blue1 +blue2 )) ) / 2417.8;
 
 
-//    return( ((double)abs((col1 & 0xff)*0x101 - col2.blue))*
+//    return( ((double)rtb_abs((col1 & 0xff)*0x101 - col2.blue))*
 //            log(1.0 + sqrt((col1 & 0xff)*0x101 + col2.blue))/log(2.0) +
-//            ((double)abs(((col1 & 0xff00) >> 8)*0x101 - col2.green))*
+//            ((double)rtb_abs(((col1 & 0xff00) >> 8)*0x101 - col2.green))*
 //            log(1.0 + sqrt(((col1 & 0xff00) >> 8)*0x101 + col2.green))/log(2.0) +
-//            ((double)abs(((col1 & 0xff0000) >> 16)*0x101 - col2.red))*
+//            ((double)rtb_abs(((col1 & 0xff0000) >> 16)*0x101 - col2.red))*
 //            log(1.0 + sqrt(((col1 & 0xff0000) >> 16)*0x101 + col2.red))/log(2.0));
 }
 

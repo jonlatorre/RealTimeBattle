@@ -909,7 +909,7 @@ ArenaReplay::step_forward_or_backward( const bool forward )
 void
 ArenaReplay::change_replay_time( const double time )
 {
-  if( !log_from_stdin && abs(time - current_replay_time) > 0.001 )
+  if( !log_from_stdin && rtb_abs(time - current_replay_time) > 0.001 )
     {
       int index = find_streampos_for_time( time );
       
