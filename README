@@ -1,4 +1,33 @@
 
+ ============================================================================
+  Nota sobre esta versión (fork de "vibecoding")
+ ============================================================================
+
+ Este repositorio es un fork del RealTimeBattle 1.0.5 original (de ~2002) con
+ un objetivo concreto: **portarlo a entornos Linux modernos**. El código
+ original dependía de GTK+ 1.x y de un C++ pre-estándar, por lo que ya no
+ compilaba en distribuciones actuales (g++ 15, Ubuntu 26.04, etc.).
+
+ Se trata de un proyecto de "vibecoding": un trabajo exploratorio y asistido
+ por IA (Claude Code) sobre el proyecto original, hecho por gusto de revivir un
+ clásico y aprender de sus tripas, más que como una release oficial. No está
+ afiliado a los autores originales.
+
+ Estado actual del port:
+
+   - Compila y se ejecuta en Linux moderno, tanto con interfaz gráfica
+     (portada de GTK+ 1.x a GTK 3) como en modo headless para torneos
+     automatizados entre robots.
+   - Instrucciones de compilación y detalle de los cambios de portado:
+     ver el fichero  BUILD-LINUX-MODERNO.md.
+
+ El resto de este README es el documento original del proyecto y se conserva
+ tal cual como referencia histórica (los enlaces y listas de correo que
+ aparecen más abajo pueden estar obsoletos).
+
+ ----------------------------------------------------------------------------
+
+
  RealTimeBattle
  --------------
 
