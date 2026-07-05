@@ -29,8 +29,9 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include <gdk/gdk.h>
 #endif NO_GRAPHICS
 
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+using namespace std;
+#include <fstream>
 
 #ifndef NO_GRAPHICS
 #include "Gui.h"

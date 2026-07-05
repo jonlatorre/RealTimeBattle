@@ -746,7 +746,7 @@ ArenaReplay::set_filenames( String& replay_fname, String& message_fname,
     }
   else
     {
-      log_file.attach( STDIN_FILENO );
+      log_file.open( "/dev/stdin", ios::in );
       if( !log_file )
         Error( true, "Couldn't attach to STDIN",
                "ArenaRealTime::set_filenames" );
@@ -758,12 +758,12 @@ ArenaReplay::set_filenames( String& replay_fname, String& message_fname,
   else if( message_fname == "-" || message_fname == "STDOUT" )
     {
       use_message_file = true;
-      message_file.attach( STDOUT_FILENO );
+      message_file.open( "/dev/stdout", ios::out );
     }
   else
     {
       use_message_file = true;
-      message_file.open( message_fname.chars(), ios::out, S_IRUSR | S_IWUSR );
+      message_file.open( message_fname.chars(), ios::out);
       if( !message_file )
         {
           Error( false, "Couldn't open message file. Message file disabled",

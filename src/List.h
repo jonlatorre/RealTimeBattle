@@ -20,9 +20,13 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #ifndef __LIST__
 #define __LIST__
 
-#include <iostream.h>
+#include <iostream>
+using namespace std;
 
-class String;
+// Se necesita la definicion completa de String (no basta la declaracion
+// adelantada): GCC valida el cuerpo de las plantillas de este fichero
+// donde se convierten literales de cadena a String.
+#include "String.h"
 
 template<class T>
 struct ListNode
@@ -42,8 +46,8 @@ struct ListIterator
 
   ListIterator(ListNode<T>* p = NULL) : listp(p) {} 
   
-  inline const ListIterator<T>& ListIterator<T>::operator++ (int);
-  inline const ListIterator<T>& ListIterator<T>::operator-- (int);
+  inline const ListIterator<T>& operator++ (int);
+  inline const ListIterator<T>& operator-- (int);
   inline T* operator() () const;
   //  bool operator! () const { return listp == NULL; }
   inline bool ok() const { return listp != NULL;}
@@ -55,7 +59,7 @@ template <class T>
 class List
 { 
 public:
-  List<T>::List(const bool resp=true);
+  List(const bool resp=true);
   ~List ();
 
   const List& operator= (const List&);
@@ -118,4 +122,4 @@ ListIterator<T>::operator-- (int)
 }
 
 
-#endif __LIST__
+#endif // __LIST__

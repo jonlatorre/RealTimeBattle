@@ -1,0 +1,39 @@
+# Artefactos de compilación
+*.o
+*.a
+*.robot
+src/RealTimeBattle
+
+# Ficheros generados por configure / autotools
+Makefile
+config.cache
+config.log
+config.status
+config.h
+stamp-h
+libtool
+
+# intl generados
+intl/libintl.h
+intl/po2tbl.sed
+
+# po generados
+po/Makefile
+po/Makefile.in
+po/POTFILES
+po/*.gmo
+po/*.mo
+
+# RPM spec generado
+Packages/rpm/RealTimeBattle.spec
+
+# Documentación generada
+Documentation/BUGS.html
+Documentation/CVS-Help.html
+Documentation/ChangeLog.html
+Documentation/FAQ.html
+Documentation/TODO.html
+Documentation/RealTimeBattle.txt
+
+# Configuración local de herramientas
+.claude/

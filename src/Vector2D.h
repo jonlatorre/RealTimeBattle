@@ -20,7 +20,8 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #ifndef __VECTOR2D__
 #define __VECTOR2D__
 
-#include <iostream.h>
+#include <iostream>
+using namespace std;
 
 class Vector2D
 {
@@ -66,6 +67,25 @@ private:
 
   Vector2D& copy_vector(const Vector2D&);
 };
+
+// Declaraciones a nivel de namespace de las funciones friend.
+// En C++ moderno la inyeccion de nombres friend ya no existe, y las
+// funciones cuyos argumentos no incluyen un Vector2D (p.ej. angle2vec)
+// no se encuentran por ADL, por lo que necesitan declaracion explicita.
+Vector2D operator+(const Vector2D&, const Vector2D&);
+Vector2D operator-(const Vector2D&);
+int operator==(const Vector2D&, const Vector2D&);
+Vector2D operator*(const Vector2D&, const double);
+Vector2D operator*(const double, const Vector2D&);
+Vector2D operator/(const Vector2D&, const double);
+ostream& operator<<(ostream&, const Vector2D&);
+istream& operator>>(istream&, Vector2D&);
+double length(const Vector2D&);
+double vec2angle(const Vector2D&);
+Vector2D angle2vec(const double);
+Vector2D unit(const Vector2D&);
+Vector2D rotate(const Vector2D&, const double angle);
+Vector2D rotate90(const Vector2D&);
 
 
 // The following functions are critical for the speed of RTB and

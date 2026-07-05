@@ -28,8 +28,10 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include <signal.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <iostream.h>
-#include <iomanip.h>
+#include <cstring>
+#include <iostream>
+using namespace std;
+#include <iomanip>
 #include <stdarg.h>
 
 #if HAVE_DIRENT_H
@@ -173,8 +175,7 @@ ArenaBase::interrupt_tournament()
 void
 ArenaBase::save_statistics_to_file(String filename)
 {
-  int mode = _IO_OUTPUT;
-  ofstream file(filename.chars(), mode);
+  ofstream file(filename.chars(), ios::out);
 
   stat_t* statp;
   Robot* robotp;

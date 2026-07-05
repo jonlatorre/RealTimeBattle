@@ -26,8 +26,9 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include <signal.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <iostream.h>
-#include <iomanip.h>
+#include <iostream>
+using namespace std;
+#include <iomanip>
 #include <stdarg.h>
 #include <sys/stat.h>
 #include <stdio.h>
@@ -110,13 +111,13 @@ ArenaRealTime::set_filenames( String& log_fname,
     }
   else if( log_fname == "-" || log_fname == "STDOUT" )  // use stdout as log_file
     {
-      LOG_FILE.attach(STDOUT_FILENO);
+      LOG_FILE.open("/dev/stdout", ios::out);
       use_log_file = true;
       log_stdout = true;
     }
   else
     {
-      LOG_FILE.open(log_fname.chars(), ios::out, S_IRUSR | S_IWUSR);
+      LOG_FILE.open(log_fname.chars(), ios::out);
       use_log_file = true;
       if( !LOG_FILE )
         {
@@ -135,7 +136,7 @@ ArenaRealTime::set_filenames( String& log_fname,
       if( !log_stdout )
         {
           use_message_file = true;
-          message_file.attach( STDOUT_FILENO );
+          message_file.open( "/dev/stdout", ios::out );
         }
       else
         {
@@ -145,7 +146,7 @@ ArenaRealTime::set_filenames( String& log_fname,
   else
     {
       use_message_file = true;
-      message_file.open( message_fname.chars(), ios::out, S_IRUSR | S_IWUSR );
+      message_file.open( message_fname.chars(), ios::out);
       if( !message_file )
         {
           Error( false, "Couldn't open message file. Message file disabled",
@@ -1069,7 +1070,7 @@ start_tournament(const List<start_tournament_info_t>& robotfilename_list,
   int complete_rounds = n_o_sequences / games_per_round;
   int rem_games = n_o_sequences % games_per_round;
 
-  robots_in_sequence = new (int*)[n_o_sequences];
+  robots_in_sequence = new int*[n_o_sequences];
   for(int i=0; i<n_o_sequences; i++) robots_in_sequence[i] = new int[robots_per_game];
   
   int current_sequence[robots_per_game];

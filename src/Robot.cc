@@ -24,7 +24,10 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include <fcntl.h>
 #include <unistd.h>
 #include <signal.h>
-#include <iostream.h>
+#include <iostream>
+using namespace std;
+#include <ext/stdio_filebuf.h>
+#include <cstring>
 #include <math.h>
 
 #ifdef TIME_WITH_SYS_TIME 
@@ -281,8 +284,11 @@ Robot::start_process()
         Error(true, "Couldn't change pd_flags for pipe_out in robot " + robot_filename, 
               "Robot::start_process, parent");
 
-      outstreamp = new ofstream(pipe_out[1]);
-      instreamp = new ifstream(pipe_in[0]);
+      // C++ moderno no permite construir un stream desde un descriptor
+      // de fichero. Usamos stdio_filebuf (extension de GCC) para envolver
+      // el descriptor exacto del pipe, preservando el flag O_NONBLOCK.
+      outstreamp = new ostream(new __gnu_cxx::stdio_filebuf<char>(pipe_out[1], ios::out));
+      instreamp = new istream(new __gnu_cxx::stdio_filebuf<char>(pipe_in[0], ios::in));
     }
 
   // wait some time to let process start up
@@ -436,9 +442,11 @@ Robot::delete_pipes()
 {
   if( ! network_robot )
     {
-      if( instreamp != NULL ) delete instreamp;
+      // Hay que liberar tambien el streambuf (stdio_filebuf), que es quien
+      // posee y cierra el descriptor del pipe.
+      if( instreamp != NULL ) { delete instreamp->rdbuf(); delete instreamp; }
       instreamp = NULL;
-      if( outstreamp != NULL ) delete outstreamp;
+      if( outstreamp != NULL ) { delete outstreamp->rdbuf(); delete outstreamp; }
       outstreamp = NULL;
     }
 
@@ -1042,12 +1050,14 @@ Robot::get_messages()
   char msg_name[81];
   message_from_robot_type msg_t;
 
-  *instreamp >> ws;
+  // Drenaje no bloqueante de los mensajes disponibles del robot. El pipe
+  // es no bloqueante: cuando no hay datos, read() da EAGAIN y el iostream
+  // moderno pone failbit (no eofbit, a diferencia de los iostreams
+  // antiguos). Por eso el bucle termina cuando la extraccion del nombre de
+  // mensaje falla, y se limpia el estado para el siguiente tick.
   instreamp->clear();
-  instreamp->peek();
-  while( !instreamp->eof() )
+  while( *instreamp >> msg_name )
     {
-      *instreamp >> msg_name;
       msg_t = name2msg_from_robot_type(msg_name);
       //      cerr << "Got message: " << msg_name << endl;
 
@@ -1488,9 +1498,8 @@ Robot::get_messages()
         }
 
       *instreamp >> ws;
-      instreamp->clear();
-      instreamp->peek();
     }
+  instreamp->clear();  // limpiar failbit por EAGAIN para el proximo tick
 }
 
 message_from_robot_type

@@ -20,7 +20,8 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #ifndef __STRING__
 #define __STRING__
 
-#include <iostream.h>
+#include <iostream>
+using namespace std;
 
 enum string_double_t { STRING_NORMAL_FORM, STRING_EXP_FORM, STRING_FIXED_FORM };
 
@@ -83,4 +84,21 @@ private:
   class Range {};
 };
 
-#endif __STRING__
+// Declaraciones a nivel de namespace de las funciones friend de String.
+// La inyeccion de nombres friend ya no existe en C++ moderno; cuando se
+// llaman con argumentos que no son String (p.ej. un char* que debe
+// convertirse), no se encuentran por ADL y necesitan estas declaraciones.
+String operator+(const String&, const String&);
+int operator==(const String&, const String&);
+int operator!=(const String&, const String&);
+ostream& operator<<(ostream&, const String&);
+istream& operator>>(istream&, String&);
+int str2int(const String&);
+long str2long(const String&);
+double str2dbl(const String&);
+long str2hex(const String&);
+String hex2str(const long);
+String get_segment(const String& str, const int start, const int end);
+String make_lower_case(const String& str);
+
+#endif // __STRING__

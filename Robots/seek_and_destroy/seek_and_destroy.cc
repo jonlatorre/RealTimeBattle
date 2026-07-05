@@ -2,7 +2,9 @@
 #include <config.h>
 #endif
 
-#include <iostream.h>
+#include <iostream>
+#include <cstring>
+using namespace std;
 #include <unistd.h>
 #include <signal.h>
 #include <stdlib.h>

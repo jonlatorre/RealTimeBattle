@@ -22,7 +22,8 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include <config.h>
 #endif
 
-#include <iostream.h>
+#include <iostream>
+using namespace std;
 
 #include "Extras.h"
 #include "ArenaController.h"
@@ -52,7 +53,7 @@ Cookie::Cookie(const Vector2D& c, const double e, const int c_id = -1)
    log_file_char = 'C';
 }
 
-Mine::Mine(const Vector2D& c, const double e, const int m_id = -1) 
+Mine::Mine(const Vector2D& c, const double e, const int m_id)
   : Extras(c, the_opts.get_d(OPTION_MINE_RADIUS), e, 
            the_opts.get_l(OPTION_MINE_COLOUR))
 { 

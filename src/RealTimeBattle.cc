@@ -52,7 +52,8 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # include <locale.h>
 #endif
 
-#include <iostream.h>
+#include <iostream>
+using namespace std;
 
 #ifdef FLOATINGPOINT_H
 #include <floatingpoint.h>

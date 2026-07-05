@@ -22,9 +22,10 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #endif
 
 #include <string.h>
-#include <iostream.h>
-#include <strstream.h>
-#include <iomanip.h>
+#include <iostream>
+using namespace std;
+#include <sstream>
+#include <iomanip>
 #include <stdlib.h>
 #include <ctype.h>
 
@@ -110,14 +111,14 @@ String::String(const long int n)
 String::String(const double x, const int digits, const string_double_t form)
 {
   buf_size = 0;
-  strstream ss;
-  if( form == STRING_NORMAL_FORM ) 
-    ss << setprecision(digits) << x << endl;
+  ostringstream ss;
+  if( form == STRING_NORMAL_FORM )
+    ss << setprecision(digits) << x;
   else
-    ss << (form == STRING_EXP_FORM ? setiosflags(ios::scientific) : setiosflags(ios::fixed)) 
-       << setprecision(digits) << x << endl;
+    ss << (form == STRING_EXP_FORM ? setiosflags(ios::scientific) : setiosflags(ios::fixed))
+       << setprecision(digits) << x;
 
-  ss >> *this;
+  *this = ss.str().c_str();
 }
 
 String::~String()

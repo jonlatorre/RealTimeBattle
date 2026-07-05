@@ -24,7 +24,8 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # include <gdk/gdk.h>
 #endif
 
-#include <fstream.h>
+#include <fstream>
+using namespace std;
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -88,7 +89,7 @@ public:
   double get_energy() { return energy; }
   pid_t get_pid() { return pid; }
   List<stat_t>* get_statistics() { return &statistics; }
-  ofstream* get_outstreamp() { return outstreamp; }  
+  ostream* get_outstreamp() { return outstreamp; }
   int get_position_this_game() { return position_this_game; }
   double get_total_points();
   //  void add_points(double pts) { points_this_game += pts; total_points += pts; }
@@ -185,8 +186,8 @@ private:
   double cpu_timeout;
   double last_cpu;
 
-  ifstream* instreamp;
-  ofstream* outstreamp;
+  istream* instreamp;
+  ostream* outstreamp;
 
   int pipes[2];
   pid_t pid;    

@@ -49,8 +49,9 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include <stdlib.h>
 //#include <stdio.h>
 #include <string.h>
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+using namespace std;
+#include <fstream>
 
 #include "Various.h"
 #include "IntlDefs.h"
@@ -380,6 +381,11 @@ parse_tournament_file( const String& fname, const StartTournamentFunction functi
   for(;;)
     {
       char buffer[200];
+      // Se limpia el buffer antes de leer: bajo iostreams modernos, si el
+      // stream ya esta en estado de fallo (p.ej. al llegar a EOF), la
+      // extraccion es un no-op y dejaria el token anterior, provocando un
+      // bucle infinito. Asi cualquier lectura no exitosa deja word vacia.
+      buffer[0] = '\0';
       file >> buffer;
       String word(buffer);
 
