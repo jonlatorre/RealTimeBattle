@@ -37,6 +37,28 @@ Resultado:
 - `src/RealTimeBattle` — el motor del juego (con o sin GUI según el `configure`).
 - `Robots/*/*.robot` — robots de ejemplo (procesos independientes).
 
+## Integración continua y binarios (GitHub Actions)
+
+El repositorio incluye dos flujos de trabajo en `.github/workflows/`, que
+reutilizan los scripts de `.github/scripts/` (`build.sh`, `smoke-test.sh`,
+`package.sh`):
+
+- **`ci.yml`** — en cada *push* y *pull request* a `master`: compila los dos
+  modos (gráfico y headless), ejecuta una prueba de humo (un torneo corto que
+  debe generar estadísticas) y publica los `.tar.gz` como **artefactos** de la
+  ejecución.
+- **`release.yml`** — al crear una etiqueta `v*` (o manualmente desde la pestaña
+  Actions): compila ambos binarios, genera además un tarball del **código
+  fuente** y lo sube todo como *assets* de una **GitHub Release** (equivalente a
+  las descargas por versión que el proyecto tenía en SourceForge).
+
+Para publicar una versión basta con:
+
+```sh
+git tag v1.0.5-modern
+git push origin v1.0.5-modern
+```
+
 ## Probar (torneo headless)
 
 ```sh

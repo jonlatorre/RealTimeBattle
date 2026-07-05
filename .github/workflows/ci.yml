@@ -1,0 +1,46 @@
+name: CI
+
+# Compila el proyecto en cada push y pull request, ejecuta una prueba de humo
+# y publica los binarios como artefactos descargables de la ejecución.
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build (${{ matrix.mode }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [ graphics, headless ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential autoconf automake pkg-config libgtk-3-dev xvfb
+
+      - name: Compilar (${{ matrix.mode }})
+        run: bash .github/scripts/build.sh ${{ matrix.mode }}
+
+      - name: Prueba de humo
+        run: bash .github/scripts/smoke-test.sh
+
+      - name: Empaquetar
+        run: bash .github/scripts/package.sh ${{ matrix.mode }} "${{ github.sha }}"
+
+      - name: Subir artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: RealTimeBattle-${{ matrix.mode }}-linux-x86_64
+          path: dist/*.tar.gz
+          if-no-files-found: error

@@ -37,3 +37,6 @@ Documentation/RealTimeBattle.txt
 
 # Configuración local de herramientas
 .claude/
+
+# Artefactos de empaquetado (CI)
+dist/

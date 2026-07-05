@@ -1,0 +1,85 @@
+name: Release
+
+# Al crear una etiqueta v* (o lanzarlo manualmente), compila los binarios
+# gráfico y headless, genera un tarball del código fuente y lo publica todo
+# como assets de una GitHub Release — igual que las descargas por versión que
+# el proyecto original ofrecía en SourceForge.
+
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Versión a publicar (p.ej. v1.0.5-modern)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential autoconf automake pkg-config libgtk-3-dev xvfb
+
+      - name: Determinar versión
+        id: ver
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
+      # --- Binario gráfico (GTK 3) ---
+      - name: Compilar gráfico
+        run: bash .github/scripts/build.sh graphics
+      - name: Prueba de humo (gráfico)
+        run: bash .github/scripts/smoke-test.sh
+      - name: Empaquetar gráfico
+        run: bash .github/scripts/package.sh graphics "${{ steps.ver.outputs.version }}"
+
+      # --- Binario headless ---
+      # distclean deja el árbol limpio para reconfigurar; build.sh headless
+      # vuelve a compilar el motor y los robots de ejemplo.
+      - name: Limpiar entre configuraciones
+        run: make distclean || true
+      - name: Compilar headless
+        run: bash .github/scripts/build.sh headless
+      - name: Prueba de humo (headless)
+        run: bash .github/scripts/smoke-test.sh
+      - name: Empaquetar headless
+        run: bash .github/scripts/package.sh headless "${{ steps.ver.outputs.version }}"
+
+      # --- Tarball del código fuente ---
+      - name: Empaquetar código fuente
+        run: |
+          V="${{ steps.ver.outputs.version }}"
+          git archive --format=tar.gz \
+            --prefix="RealTimeBattle-${V}/" \
+            -o "dist/RealTimeBattle-${V}-source.tar.gz" HEAD
+
+      - name: Listar assets
+        run: ls -la dist/
+
+      - name: Crear release y subir binarios
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          V="${{ steps.ver.outputs.version }}"
+          if gh release view "$V" >/dev/null 2>&1; then
+            gh release upload "$V" dist/*.tar.gz --clobber
+          else
+            gh release create "$V" dist/*.tar.gz \
+              --title "RealTimeBattle $V" \
+              --generate-notes
+          fi
